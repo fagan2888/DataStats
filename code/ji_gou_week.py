@@ -112,8 +112,14 @@ def ji_gou_week(sh, sql):
     num_style = cell_style(height = 12, borders = True, num_format = '0.00')
     percent_style = cell_style(height=12, borders=True, num_format='0.00%')
 
+    # 从第5行开始写入数据
+    # 第1行表标题
+    # 第2行统计时间范围
+    # 第3行数据类型标题
+    # 第4行险种标题
     nrow = 4
 
+    # 将排序后的四级机构数据写入表中
     for datas in ji_gou_data_sort:
         ncol = 0
         for value in datas:
@@ -124,15 +130,18 @@ def ji_gou_week(sh, sql):
             else:
                 data_style = percent_style
             
+            # 第一列写入序号
             if ncol == 0:
                 sh.row(nrow).write(ncol, nrow - 3, data_style)
                 ncol += 1
-
+            
+            # 从第二列开始写入数据
             sh.row(nrow).write(ncol, value, data_style)
 
             ncol += 1
         nrow += 1
 
+    # 将排序后的内部团队数据写入表中，行号延续四级机构写入完的行号
     for datas in team_data_sort:
         ncol = 0
         for value in datas:
@@ -150,7 +159,8 @@ def ji_gou_week(sh, sql):
             sh.row(nrow).write(ncol, value, data_style)
             ncol += 1
         nrow += 1
-
+    
+    # 最后统计分公司整体保费
     name = "分公司整体"
     che = Stats(name, "车险", sql)
     fei_che = Stats(name, "非车险", sql)
