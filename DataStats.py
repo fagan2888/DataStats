@@ -4,11 +4,13 @@ import xlwt
 import logging
 import os
 import sys
+import shutil
+from datetime import datetime
 
 abspath = os.path.abspath(__file__)
 dirname = os.path.dirname(abspath)
-codepath = dirname + r'\code'
-sys.path.append(codepath)
+code_path = dirname + r'\code'
+sys.path.append(code_path)
 
 from my_sql import MySql
 from db_update import db_update
@@ -29,8 +31,15 @@ def main():
     sql = MySql(r"Data\data.db")
     logging.debug("数据库连接成功")
     
-    ## 更新数据库
-    #db_update(sql)
+    # 更新数据库，数据库更新完毕后将原始数据文件进行备份
+    # 同时避免多次无意义的更新数据库
+    table_name = "昆明机构周报.xlsx"
+    if os.path.isfile(table_name):
+        db_update(table_name, sql)
+        backup_path = dirname + r"\Backup"
+        backup_name = backup_path +"\\" + table_name[:-5] + datetime.today().strftime("%Y%m%d") + ".xlsx"
+        shutil.copyfile(table_name, backup_name)
+        os.remove(table_name)
     
     # 建立Excel工作簿
     book = xlwt.Workbook(encoding = "utf-8")

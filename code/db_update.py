@@ -1,10 +1,11 @@
 import xlrd
+import os
 import logging
 
 logging.disable(logging.NOTSET)
 logging.basicConfig(level = logging.DEBUG, format = ' %(asctime)s | %(levelname)s | %(message)s' )
 
-def db_update(sql):
+def db_update(table_name, sql):
     """
     读取从MIS系统导出的Excel表中的内容
     清空数据库中今年的数据
@@ -12,8 +13,7 @@ def db_update(sql):
     """
        
     # 载入excel中的业务清单表,并对后期 sql语句数据插入做准备
-    table_name = "昆明机构周报"
-    book = xlrd.open_workbook(table_name + ".xlsx")
+    book = xlrd.open_workbook(table_name)
     sheet = book.sheet_by_name("page")
     # 获取投保确认时间
     tou_bao_date = sheet.col_values(0)

@@ -87,7 +87,8 @@ def ji_gou_week(sh, sql):
         che = Stats(name, "车险", sql)
         fei_che = Stats(name, "非车险", sql)
         zheng_ti = Stats(name, "整体", sql)
-        data = (name, che.task, fei_che.task, zheng_ti.task, che.this_year, fei_che.this_year, zheng_ti.this_year, che.time_progress_rate, fei_che.time_progress_rate, zheng_ti.time_progress_rate,zheng_ti.year_tong_bi)
+        data = (name, che.task, fei_che.task, zheng_ti.task, che.this_year, fei_che.this_year, zheng_ti.this_year, che.time_progress_rate, 
+                fei_che.time_progress_rate, zheng_ti.time_progress_rate,zheng_ti.year_tong_bi)
         ji_gou_data.append(data)
         logging.debug("{0}信息统计完成".format(name))
     
@@ -99,7 +100,8 @@ def ji_gou_week(sh, sql):
         che = Stats(name, "车险", sql)
         fei_che = Stats(name, "非车险", sql)
         zheng_ti = Stats(name, "整体", sql)
-        data = (name, che.task, fei_che.task, zheng_ti.task, che.this_year, fei_che.this_year, zheng_ti.this_year, che.time_progress_rate, fei_che.time_progress_rate, zheng_ti.time_progress_rate,zheng_ti.year_tong_bi)
+        data = (name, che.task, fei_che.task, zheng_ti.task, che.this_year, fei_che.this_year, zheng_ti.this_year, che.time_progress_rate, 
+                fei_che.time_progress_rate, zheng_ti.time_progress_rate,zheng_ti.year_tong_bi)
         team_data.append(data)
         logging.debug("{0}信息统计完成".format(name))
 
@@ -165,7 +167,8 @@ def ji_gou_week(sh, sql):
     che = Stats(name, "车险", sql)
     fei_che = Stats(name, "非车险", sql)
     zheng_ti = Stats(name, "整体", sql)
-    datas = (name, che.task, fei_che.task, zheng_ti.task, che.this_year, fei_che.this_year, zheng_ti.this_year, che.time_progress_rate, fei_che.time_progress_rate, zheng_ti.time_progress_rate,zheng_ti.year_tong_bi)
+    datas = (name, che.task, fei_che.task, zheng_ti.task, che.this_year, fei_che.this_year, zheng_ti.this_year, che.time_progress_rate, 
+             fei_che.time_progress_rate, zheng_ti.time_progress_rate,zheng_ti.year_tong_bi)
 
     ncol = 0
     for value in datas:
