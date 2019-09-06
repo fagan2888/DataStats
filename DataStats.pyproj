@@ -31,10 +31,12 @@
     <Compile Include="DataStats.py" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Backup\" />
     <Folder Include="code\" />
     <Folder Include="Data\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Backup\昆明机构周报20190906.xlsx" />
     <Content Include="Data\data.db" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
