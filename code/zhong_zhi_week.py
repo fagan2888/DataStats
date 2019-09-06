@@ -13,15 +13,18 @@ logging.basicConfig(level = logging.DEBUG, format = ' %(asctime)s | %(levelname)
 
 def zhong_zhi_week(sh, sql):
 
+    # 写入表标题
     title_style = cell_style(height = 14, bold = True)
     title_str = "2019年三级机构签单保费达成情况"
     sh.write_merge(0, 0, 0, 16, title_str, title_style)
     logging.debug("表头写入完成")
 
+    # 写入数据统计的时间范围
     date_style = cell_style(height = 10)
     date_str = "数据统计范围：{0}至{1}".format("2019-01-01", date.today()-timedelta(days = 1))
     sh.write_merge(1, 1, 0, 16, date_str, date_style)
     logging.debug("时间范围写入完成")
+
 
     header_style = cell_style(height=12, bold=True, borders=True)
     row_style = xlwt.easyxf("font:height {0}".format(20 * 16))

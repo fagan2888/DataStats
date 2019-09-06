@@ -32,19 +32,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="code\" />
-    <Folder Include="code\__pycache__\" />
     <Folder Include="Data\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="code\__pycache__\cell_style.cpython-37.pyc" />
-    <Content Include="code\__pycache__\db_update.cpython-37.pyc" />
-    <Content Include="code\__pycache__\ji_gou_week.cpython-37.pyc" />
-    <Content Include="code\__pycache__\kun_ming_week.cpython-37.pyc" />
-    <Content Include="code\__pycache__\my_date.cpython-37.pyc" />
-    <Content Include="code\__pycache__\my_sql.cpython-37.pyc" />
-    <Content Include="code\__pycache__\stats.cpython-37.pyc" />
-    <Content Include="code\__pycache__\zhong_zhi_week.cpython-37.pyc" />
-    <Content Include="code\__pycache__\__init__.cpython-37.pyc" />
     <Content Include="Data\data.db" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
