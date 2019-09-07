@@ -1,7 +1,7 @@
 import xlwt
 
 
-def cell_style(height=12, bold=False, borders=False, num_format='general', wrap=0):
+def cell_style(height=12, bold=False, font_color = 0x7FF, borders=False, num_format='general', wrap=0):
     """
         设置单元格样式，包括字体、字号、加粗、对齐、边框、数字格式，可对字号、加粗、边框、数字格式进行自定义设置，默认为：
         字体：微软雅黑
@@ -20,6 +20,7 @@ def cell_style(height=12, bold=False, borders=False, num_format='general', wrap=
     # 字体高度为字号的20倍整数表达，故此处字号值应为 20 × 字号
     font.height = 20 * height
     font.bold = bold
+    font.colour_index = font_color
     
     # 设置数字格式
     if num_format !=  'general':
