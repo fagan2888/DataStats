@@ -16,13 +16,13 @@ def zhong_zhi_week(sh, sql):
     # 写入表标题
     title_style = cell_style(height = 14, bold = True)
     title_str = "2019年三级机构签单保费达成情况"
-    sh.write_merge(0, 0, 0, 16, title_str, title_style)
+    sh.write_merge(0, 0, 0, 20, title_str, title_style)
     logging.debug("表头写入完成")
 
     # 写入数据统计的时间范围
     date_style = cell_style(height = 10)
     date_str = "数据统计范围：{0}至{1}".format("2019-01-01", date.today()-timedelta(days = 1))
-    sh.write_merge(1, 1, 0, 16, date_str, date_style)
+    sh.write_merge(1, 1, 0, 20, date_str, date_style)
     logging.debug("时间范围写入完成")
 
     # 写入表头
@@ -49,18 +49,23 @@ def zhong_zhi_week(sh, sql):
     # 设置时间进度达成率列表头和列宽
     sh.write_merge(2, 2, 9, 12, "时间进度达成率", header_style)
     for i in range(9, 13):
-        sh.col(i).width = 256 * 12
+        sh.col(i).width = 256 * 11
 
     # 设置同比增长率列表头和列宽
     sh.write_merge(2, 2, 13, 16, "同比增长率", header_style)
     for i in range(13, 17):
-        sh.col(i).width = 256 * 12
+        sh.col(i).width = 256 * 11
+
+    # 设置计划任务达成率表头和列宽
+    sh.write_merge(2, 2, 17, 20, "计划任务达成率", header_style)
+    for i in range(17, 21):
+        sh.col(i).width = 265 * 11
 
     # 写入第二行表头（险种信息）
     risk_list = ("车险", "财产险", "人身险", "整体")
     sh.row(4).set_style(row_style)
     i = 0
-    while i < 4:
+    while i < 5:
         ncol = 0
         while ncol < 4:
             c = ncol + 1 + i * 4
@@ -83,7 +88,9 @@ def zhong_zhi_week(sh, sql):
         zheng_ti = Stats(name, "整体", sql, "中心支公司")
         zhong_zhi_data = (name, che.task, cai_chan.task, ren_shen.task, zheng_ti.task, che.this_year, cai_chan.this_year, ren_shen.this_year, 
                           zheng_ti.this_year, che.time_progress_rate, cai_chan.time_progress_rate, ren_shen.time_progress_rate, 
-                          zheng_ti.time_progress_rate, che.year_tong_bi, cai_chan.year_tong_bi, ren_shen.year_tong_bi, zheng_ti.year_tong_bi)
+                          zheng_ti.time_progress_rate, che.year_tong_bi, cai_chan.year_tong_bi, ren_shen.year_tong_bi, zheng_ti.year_tong_bi, 
+                          che.planned_task_completion_rate, cai_chan.planned_task_completion_rate, ren_shen.planned_task_completion_rate, 
+                          zheng_ti.planned_task_completion_rate)
         ncol = 0
         for value in zhong_zhi_data:
             if ncol < 5:

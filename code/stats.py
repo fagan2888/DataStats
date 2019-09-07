@@ -62,6 +62,9 @@ class Stats(object):
 
     @property
     def ji_gou_fan_wei(self):
+        """
+        返回机构获取数据的范围
+        """
         if self.name == "分公司整体":
             value = "[中心支公司] like '%'"
         elif self.name == "沾益":

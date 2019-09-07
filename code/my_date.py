@@ -21,19 +21,19 @@ class MyDate(object):
     @property
     def date(self):
         """返回今年当天的日期，格式为：‘YYYY-MM-DD’"""
-        value = date.today()
+        value = date.today().strftime("%Y-%m-%d")
         return value
 
     @property
     def year(self):
         """返回今年的年份，格式为： ‘YYYY’"""
-        value = '{:0>2}'.format(date.today().strftime("%Y"))
+        value = date.today().strftime("%Y")
         return value
 
     @property
     def month(self):
         """返回今年当月的月份，格式为： ‘MM’"""
-        value = '{:0>2}'.format(date.today().strftime("%m"))
+        value = date.today().strftime("%m")
         return value
 
     @property
@@ -45,7 +45,7 @@ class MyDate(object):
     @property
     def day(self):
         """返回当年今天的日，格式为： ‘DD’"""
-        value = '{:0>2}'.format(date.today().strftime("%d"))
+        value = date.today().strftime("%d")
         return value
 
     @property
