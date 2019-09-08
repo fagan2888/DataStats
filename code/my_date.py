@@ -1,4 +1,5 @@
 from datetime import date
+from datetime import timedelta
 
 
 class MyDate(object):
@@ -86,4 +87,44 @@ class MyDate(object):
         """返回今年的时间进度，float变量"""
         ydays = date(int(self.year), 12, 31).strftime("%j")
         value = self.yday / int(ydays)
+        return value
+
+    @property
+    def end_date(self):
+        """返回同比增长率统计表中需要的数据截至时间"""
+        if int(self.day)<=10:
+            value = (date(2019, int(self.month), 1) - timedelta(days = 1)).strftime("%Y-%m-%d")
+        elif int(self.day)<=20:
+            value = date(2019, int(self.month), 10) .strftime("%Y-%m-%d")
+        else:
+            value = date(2019, int(self.month), 20) .strftime("%Y-%m-%d")
+        return value
+
+    @property
+    def end_month(self):
+        """返回同比增长率统计表中月统计的月份"""
+        value = self.end_date[5:7]
+        return value
+
+    @property
+    def begin_date(self):
+        """返回同比增长率统计表中旬统计需要的数据起始时间"""
+        if int(self.day)<=10:
+            value = date(2019, int(self.end_month), 21) .strftime("%Y-%m-%d")
+        elif int(self.day)<=20:
+            value = date(2019, int(self.end_month), 1) .strftime("%Y-%m-%d")
+        else:
+            value = date(2019, int(self.end_month), 11) .strftime("%Y-%m-%d")
+        return value
+
+    @property
+    def last_end_date(self):
+        """返回同比增长率统计表中同期数据需要的数据截至时间"""
+        value = self.last_year + self.end_date[4:]
+        return value
+
+    @property
+    def last_begin_date(self):
+        """返回同比增长率统计表中同期数据需要的数据起始时间"""
+        value = self.last_year + self.begin_date[4:]
         return value

@@ -27,6 +27,9 @@
     <Compile Include="code\my_date.py" />
     <Compile Include="code\my_sql.py" />
     <Compile Include="code\stats.py" />
+    <Compile Include="code\tong_bi_growth_rate.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="code\zhong_zhi_week.py" />
     <Compile Include="DataStats.py" />
   </ItemGroup>

@@ -6,16 +6,11 @@ class Stats(object):
     以一个机构为实例，返回计算报表相关数据
     """
     def __init__(self, name, risk, sql, level="机构"):
-        # 机构简称
-        self._jian_cheng = name
-        # 日期对象
-        self._date = MyDate()
-        # 数据库对象
-        self._sql = sql
-        # 险种
-        self._risk = risk
-        # 机构层级（中心支公司或机构）
-        self._level = level
+        self._jian_cheng = name                                 # 机构简称
+        self._date = MyDate()                                     # 日期对象
+        self._sql = sql                                                  # 数据库对象
+        self._risk = risk                                                 # 险种
+        self._level = level                                             # 机构层级（中心支公司或机构）
 
     @property    
     def jian_cheng(self):
@@ -368,3 +363,146 @@ class Stats(object):
             value = self.planned_task_completion_rate / self._date.time_progress
             return value
 
+    @property
+    def this_year_limit(self):
+        """返回同比增长率统计表中今年保费累计"""
+        if self.risk == "整体":
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] where ({1}) and [投保确认日期] <= '{2}'"
+                   .format(self._date.year, self.ji_gou_fan_wei, self._date.end_date))
+        elif self.risk == "非车险":
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] where ({1}) and [车险/财产险/人身险] <> '车险' and [投保确认日期] <= '{2}'"
+                   .format(self._date.year, self.ji_gou_fan_wei, self._date.end_date))
+        else:
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] where ({1}) and [车险/财产险/人身险] = '{2}' and [投保确认日期] <= '{3}'"
+                   .format(self._date.year, self.ji_gou_fan_wei, self.risk, self._date.end_date))
+         
+        value = self.sql.exec_query(sql_str)
+        if value is not None :
+            return value/10000
+        else:
+            return 0
+
+    @property
+    def last_year_limit(self):
+        """返回同比增长率统计表中去年同期保费累计"""
+        if self.risk == "整体":
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] where ({1}) and [投保确认日期] <= '{2}'"
+                   .format(self._date.last_year, self.ji_gou_fan_wei, self._date.last_end_date)) 
+        elif self.risk == "非车险":
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] where ({1}) and [车险/财产险/人身险] <> '车险' and [投保确认日期] <= '{2}'"
+                   .format(self._date.last_year, self.ji_gou_fan_wei, self._date.last_end_date)) 
+        else:
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] where ({1}) and [车险/财产险/人身险] = '{2}' and [投保确认日期] <= '{3}'"
+                   .format(self._date.last_year, self.ji_gou_fan_wei, self.risk, self._date.last_end_date)) 
+        
+        value = self.sql.exec_query(sql_str)
+        if value is not None :
+            return value/10000
+        else:
+            return 0
+
+    @property
+    def this_year_month_limit(self):
+        """返回今年本月保费"""
+        if self.risk == "整体":
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] join [日期] on [{0}年].[投保确认日期] = [日期].[投保确认日期] where [日期].[月份] = '{1}' \
+                    and ([{0}年].{2}) and [日期].[投保确认日期] <= '{3}'".format(self._date.year, self._date.end_month, self.ji_gou_fan_wei, self._date.end_date))
+        elif self.risk == "非车险":
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] join [日期] on [{0}年].[投保确认日期] = [日期].[投保确认日期] where [日期].[月份] = '{1}' \
+                    and ([{0}年].{2}) and [车险/财产险/人身险] <> '车险' and [日期].[投保确认日期] <= '{3}'"
+                    .format(self._date.year, self._date.end_month, self.ji_gou_fan_wei,  self._date.end_date))
+        else:
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] join [日期] on [{0}年].[投保确认日期] = [日期].[投保确认日期] where [日期].[月份] = '{1}' \
+                    and ([{0}年].{2}) and [车险/财产险/人身险] = '{3}' and [日期].[投保确认日期] <= '{4}'"
+                    .format(self._date.year, self._date.end_month, self.ji_gou_fan_wei,  self.risk, self._date.end_date))
+        
+        value = self.sql.exec_query(sql_str)
+        if value is not None :
+            return value/10000
+        else:
+            return 0
+
+    @property
+    def last_year_month_limit(self):
+        """返回去年本月保费"""
+        if self.risk == "整体":
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] join [日期] on [{0}年].[投保确认日期] = [日期].[投保确认日期] where [日期].[月份] = '{1}' \
+                    and ([{0}年].{2}) and [日期].[投保确认日期] <= '{3}'"
+                    .format(self._date.last_year, self._date.end_month, self.ji_gou_fan_wei, self._date.end_date))
+        elif self.risk == "非车险":
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] join [日期] on [{0}年].[投保确认日期] = [日期].[投保确认日期] where [日期].[月份] = '{1}' \
+                    and ([{0}年].{2}) and [车险/财产险/人身险] <> '车险' and [日期].[投保确认日期] <= '{3}'"
+                    .format(self._date.last_year, self._date.end_month, self.ji_gou_fan_wei, self._date.end_date))
+        else:
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] join [日期] on [{0}年].[投保确认日期] = [日期].[投保确认日期] where [日期].[月份] = '{1}' \
+                    and ([{0}年].{2}) and [车险/财产险/人身险] = '{3}' and [日期].[投保确认日期] <= '{4}'"
+                    .format(self._date.last_year, self._date.end_month, self.ji_gou_fan_wei,  self.risk, self._date.end_date))
+        value = self.sql.exec_query(sql_str)
+        if value is not None :
+            return value/10000
+        else:
+            return 0
+
+    @property
+    def this_ten_days(self):
+        """返回今年旬保费"""
+        if self.risk == "整体":
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] where ([{0}年].{1}) and [投保确认日期] >= '{2}' and [投保确认日期] <= '{3}'"
+                       .format(self._date.year, self.ji_gou_fan_wei, self._date.begin_date, self._date.end_date))
+        elif self.risk == "非车险":
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] where ([{0}年].{1}) and [车险/财产险/人身险] <> '车险' and \
+                       [投保确认日期] >= '{2}' and [投保确认日期] <= '{3}'"
+                       .format(self._date.year, self.ji_gou_fan_wei, self._date.begin_date, self._date.end_date))
+        else:
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] where ([{0}年].{1}) and [车险/财产险/人身险] = '{2}' and \
+                       [投保确认日期] >= '{3}' and [投保确认日期] <= '{4}'"
+                       .format(self._date.year, self.ji_gou_fan_wei, self.risk, self._date.begin_date, self._date.end_date))
+        
+        value = self.sql.exec_query(sql_str)
+        if value is not None :
+            return value/10000
+        else:
+            return 0
+
+    @property
+    def last_ten_days(self):
+        """返回今年旬保费"""
+        if self.risk == "整体":
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] where ([{0}年].{1}) and [投保确认日期] >= '{2}' and [投保确认日期] <= '{3}'"
+                       .format(self._date.last_year, self.ji_gou_fan_wei, self._date.last_begin_date, self._date.last_end_date))
+        elif self.risk == "非车险":
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] where ([{0}年].{1}) and [车险/财产险/人身险] <> '车险' and \
+                       [投保确认日期] >= '{2}' and [投保确认日期] <= '{3}'"
+                       .format(self._date.last_year, self.ji_gou_fan_wei, self._date.last_begin_date, self._date.last_end_date))
+        else:
+            sql_str = ("select sum([签单保费/批改保费]) from [{0}年] where ([{0}年].{1}) and [车险/财产险/人身险] = '{2}' and \
+                       [投保确认日期] >= '{3}' and [投保确认日期] <= '{4}'"
+                       .format(self._date.last_year, self.ji_gou_fan_wei, self.risk, self._date.last_begin_date, self._date.last_end_date))
+        
+        value = self.sql.exec_query(sql_str)
+        if value is not None :
+            return value/10000
+        else:
+            return 0
+
+    @property
+    def year_tong_bi_limit(self):
+        """返回同比增长率统计表中的年度保费同比"""
+        value = (self.this_year_limit / self.last_year_limit) -1
+        return value
+
+    @property
+    def month_tong_bi_limit(self):
+        if self.last_year_month_limit == 0:
+            value = -1
+        else:
+            value = (self.this_year_month_limit / self.last_year_month_limit) - 1
+        return value
+
+    @property
+    def ten_days_tong_bi(self):
+        if self.last_ten_days == 0:
+            value = -1
+        else:
+            value = (self.this_ten_days / self.last_ten_days) -1
+        return value
