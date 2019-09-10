@@ -85,12 +85,12 @@ def zhong_zhi_week(sh, sql):
         che = Stats(name, "车险", sql, "中心支公司")
         cai_chan = Stats(name, "财产险", sql, "中心支公司")
         ren_shen = Stats(name, "人身险", sql, "中心支公司")
-        zheng_ti = Stats(name, "整体", sql, "中心支公司")
-        zhong_zhi_data = (name, che.task, cai_chan.task, ren_shen.task, zheng_ti.task, che.this_year, cai_chan.this_year, ren_shen.this_year, 
-                          zheng_ti.this_year, che.time_progress_rate, cai_chan.time_progress_rate, ren_shen.time_progress_rate, 
-                          zheng_ti.time_progress_rate, che.year_tong_bi, cai_chan.year_tong_bi, ren_shen.year_tong_bi, zheng_ti.year_tong_bi, 
-                          che.planned_task_completion_rate, cai_chan.planned_task_completion_rate, ren_shen.planned_task_completion_rate, 
-                          zheng_ti.planned_task_completion_rate)
+        zheng = Stats(name, "整体", sql, "中心支公司")
+        zhong_zhi_data = (name, che.task, cai_chan.task, ren_shen.task, zheng.task, che.this_year, cai_chan.this_year, ren_shen.this_year, 
+                          zheng.this_year, che.time_progress, cai_chan.time_progress, ren_shen.time_progress, 
+                          zheng.time_progress, che.year_tong_bi, cai_chan.year_tong_bi, ren_shen.year_tong_bi, zheng.year_tong_bi, 
+                          che.task_progress, cai_chan.task_progress, ren_shen.task_progress, 
+                          zheng.task_progress)
         ncol = 0
         for value in zhong_zhi_data:
             if ncol < 5:

@@ -349,18 +349,18 @@ class Stats(object):
         return value
 
     @property
-    def planned_task_completion_rate(self):
+    def task_progress(self):
         """返回机构的计划任务达成率"""
         value = self.this_year / self.task
         return value
     
     @property
-    def time_progress_rate(self):
+    def time_progress(self):
         """返回机构的时间进度达成率"""
-        if self.planned_task_completion_rate == 0:
+        if self.task_progress == 0:
             return 0
         else:
-            value = self.planned_task_completion_rate / self._date.time_progress
+            value = self.task_progress / self._date.time_progress
             return value
 
     @property
@@ -493,6 +493,7 @@ class Stats(object):
 
     @property
     def month_tong_bi_limit(self):
+        """返回同比增长率统计表中的月度保费同比"""
         if self.last_year_month_limit == 0:
             value = -1
         else:
@@ -501,8 +502,15 @@ class Stats(object):
 
     @property
     def ten_days_tong_bi(self):
+        """返回同比增长率统计表中的旬度保费同比"""
         if self.last_ten_days == 0:
             value = -1
         else:
             value = (self.this_ten_days / self.last_ten_days) -1
+        return value
+
+    @property
+    def task_balance(self):
+        """返回计划任务差额"""
+        value = self.this_year - self.task
         return value
