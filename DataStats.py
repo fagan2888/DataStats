@@ -7,8 +7,7 @@ import sys
 import shutil
 from datetime import datetime
 
-abspath = os.path.abspath(__file__)
-dirname = os.path.dirname(abspath)
+dirname = os.getcwd()
 code_path = dirname + r'\code'
 sys.path.append(code_path)
 

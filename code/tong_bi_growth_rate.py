@@ -66,7 +66,7 @@ def tong_bi_growth_rate(sh, sql):
     names = ("昆明", "曲靖", "文山", "大理", "保山", "版纳", "怒江", "巧家", "分公司整体")
     num_style = cell_style(height = 12, borders = True, num_format = '0.00')
     percent_style = cell_style(height=12, borders=True, num_format='0.00%')
-
+    wei_xin_str = ""                                                                                                     # 用于存储发布到微信的文本信息
     for name in names:
         zheng_ti = Stats(name, "整体", sql, "中心支公司")
         che = Stats(name, "车险", sql, "中心支公司")
@@ -87,6 +87,14 @@ def tong_bi_growth_rate(sh, sql):
             ncol += 1
 
         logging.debug("{0}数据写入完成".format(name))
+
+        if name == "分公司整体":
+            wei_xin_str += f"""领导，你好！
+截至{idate.end_date[5:7]}月{idate.end_date[8:]}日，分公司整体签单保费{zheng_ti.this_year_limit:.2f}万元，同比增长率{zheng_ti.year_tong_bi_limit:.2%}，其中：
+车险签单保费{che.this_year_limit:.2f}万元，同比增长率{che.year_tong_bi_limit:.2%} 
+人身险签单保费{ren_shen.this_year_limit:.2f}万元，同比增长率{ren_shen.year_tong_bi_limit:.2%}
+财产险签单保费{cai_chan.this_year_limit:.2f}万元，同比增长率{cai_chan.year_tong_bi_limit:.2%}\n"""
+
         nrow += 1
     logging.debug("年度同比增长率统计表写入完成\n")
 
@@ -169,6 +177,14 @@ def tong_bi_growth_rate(sh, sql):
             ncol += 1
 
         logging.debug("{0}数据写入完成".format(name))
+
+        if name == "分公司整体":
+            wei_xin_str += f"""
+{idate.end_date[5:7]}月分公司整体签单保费{zheng_ti.this_year_month_limit:.2f}万元，同比增长率{zheng_ti.month_tong_bi_limit:.2%}，其中：
+车险签单保费{che.this_year_month_limit:.2f}万元，同比增长率{che.month_tong_bi_limit:.2%} 
+人身险签单保费{ren_shen.this_year_month_limit:.2f}万元，同比增长率{ren_shen.month_tong_bi_limit:.2%}
+财产险签单保费{cai_chan.this_year_month_limit:.2f}万元，同比增长率{cai_chan.month_tong_bi_limit:.2%}\n"""
+
         nrow += 1
     logging.debug("月度同比增长率统计表写入完成\n")
 
@@ -251,5 +267,15 @@ def tong_bi_growth_rate(sh, sql):
             ncol += 1
 
         logging.debug("{0}数据写入完成".format(name))
+
+        if name == "分公司整体":
+            wei_xin_str += f"""
+{idate.begin_date[5:7]}月{idate.begin_date[8:]}日至{idate.end_date[8:]}日期间分公司整体签单保费{zheng_ti.this_ten_days:.2f}万元，同比增长率{zheng_ti.ten_days_tong_bi:.2%}，其中：
+车险签单保费{che.this_ten_days:.2f}万元，同比增长率{che.ten_days_tong_bi:.2%} 
+人身险签单保费{ren_shen.this_ten_days:.2f}万元，同比增长率{ren_shen.ten_days_tong_bi:.2%}
+财产险签单保费{cai_chan.this_ten_days:.2f}万元，同比增长率{cai_chan.ten_days_tong_bi:.2%}\n"""
         nrow += 1
     logging.debug("旬度同比增长率统计表写入完成\n")
+
+    with open("wei_xin_string.txt", "w") as f:
+        f.write(wei_xin_str)
