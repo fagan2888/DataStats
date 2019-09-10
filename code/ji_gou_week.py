@@ -30,11 +30,11 @@ def ji_gou_week(sh, sql):
     sh.write_merge(2, 2, 0, 0, "序号", header_style)
 
     # 机构名称列列宽及标题
-    sh.col(1).width = 256 * 20
+    sh.col(1).width = 256 * 11
     sh.write_merge(2, 2, 1, 1, "机构名称", header_style)
 
     # 险种列列宽及标题
-    sh.col(2).width = 256 * 6
+    sh.col(2).width = 256 * 9
     sh.row(2).write(2, "险种", header_style)
 
     # 计划任务列列宽及标题
@@ -42,23 +42,23 @@ def ji_gou_week(sh, sql):
     sh.row(2).write(3, "计划任务", header_style)
 
     # 年度累计保费列列宽及标题
-    sh.col(4).width = 256 * 10
-    sh.row(2).write(4, "年度累计保费", header_style)
+    sh.col(4).width = 256 * 11
+    sh.row(2).write(4, "累计保费", header_style)
 
     # 同比增长率列列宽及标题
-    sh.col(5).width = 256 * 10
-    sh.row(2).write(5, "同比增长率", header_style)
+    sh.col(5).width = 256 * 12
+    sh.row(2).write(5, "同比增长", header_style)
 
     # 时间进度达成率列列宽及标题
-    sh.col(6).width = 256 * 10
-    sh.row(2).write(6, "时间进度达成率", header_style)
+    sh.col(6).width = 256 * 13
+    sh.row(2).write(6, "时间进度", header_style)
 
     # 计划任务达成率列列宽及标题
-    sh.col(7).width = 256 * 10
-    sh.row(2).write(7, "计划任务进度达成率", header_style)
+    sh.col(7).width = 256 * 12
+    sh.row(2).write(7, "任务达成率", header_style)
 
     # 任务达成情况列列宽及标题
-    sh.col(8).width = 256 * 10
+    sh.col(8).width = 256 * 11
     sh.row(2).write(8, "任务达成情况", header_style)
 
     # 四级机构名称列表
@@ -101,95 +101,233 @@ def ji_gou_week(sh, sql):
     # 对机构、内部团队数据按年度整体保费按降序排序，四级机构与内部团队分别排序
     ji_gou_data_sort = sorted(ji_gou_data, key = lambda d : d[17], reverse = True)
     team_data_sort = sorted(team_data, key = lambda d : d[17], reverse = True)
-    
+
     # 建立三种不同数据类型的数据显示样式
+    name_style = cell_style(height = 12, borders = True, wrap = 1)
     task_style = cell_style(height = 12, borders = True, num_format = '0')
+    bold_task_style = cell_style(height = 12, bold = True, borders = True, num_format = '0')
     num_style = cell_style(height = 12, borders = True, num_format = '0.00')
+    bold_num_style = cell_style(height = 12, bold = True, borders = True, num_format = '0.00')
     percent_style = cell_style(height=12, borders=True, num_format='0.00%')
+    bold_percent_style = cell_style(height=12, bold = True, borders=True, num_format='0.00%')
     percent_style_red = cell_style(height=12, font_color = 0x0A, borders=True, num_format='0.00%')
+    bold_percent_style_red = cell_style(height=12, font_color = 0x0A, bold = True, borders=True, num_format='0.00%')
+
+    pattern_gray = xlwt.Pattern()
+    pattern_gray.pattern = xlwt.Pattern.SOLID_PATTERN
+    pattern_gray.pattern_fore_colour = 0x16
+
+    pattern_default = xlwt.Pattern()
+    pattern_default.pattern = xlwt.Pattern.SOLID_PATTERN
+    pattern_default.pattern_fore_colour = 64
 
     # 从第4行开始写入数据
     nrow = 3
     id = 1
 
     # 将排序后的四级机构数据写入表中
-    for datas in ji_gou_data_sort:
+    for data in ji_gou_data_sort:
         ncol = 0
-        for k, v in enumerate(datas):
-            if ncol < 4:
-                data_style = task_style
-            elif ncol < 5:
-                data_style = num_style
-            elif ncol < 8:
-                data_style = percent_style
-            else:
-                data_style = num_style
-            
+
+        if id % 2 == 1:
+            name_style.pattern = pattern_gray
+            task_style.pattern = pattern_gray
+            bold_task_style.pattern = pattern_gray
+            num_style.pattern = pattern_gray
+            bold_num_style.pattern = pattern_gray
+            percent_style.pattern = pattern_gray
+            bold_percent_style.pattern = pattern_gray
+            percent_style_red.pattern = pattern_gray
+            bold_percent_style_red.pattern = pattern_gray
+        else:
+            name_style.pattern = pattern_default
+            task_style.pattern = pattern_default
+            bold_task_style.pattern = pattern_default
+            num_style.pattern = pattern_default
+            bold_num_style.pattern = pattern_default
+            percent_style.pattern = pattern_default
+            bold_percent_style.pattern = pattern_default
+            percent_style_red.pattern = pattern_default
+            bold_percent_style_red.pattern = pattern_default
+
+        for key, value in enumerate(data):
             # 第一列写入序号
-            if ncol == 0:
-                sh.write_merge(nrow, nrow + 2, ncol, ncol, id, num_style)
+            if ncol == 0:                                                                                # 序号列
+                sh.write_merge(nrow, nrow + 2, ncol, ncol, id, task_style)
                 ncol += 1
             
-            if k == 0:
-                sh.write_merge(nrow, nrow + 2, ncol, ncol, k, num_style)
-            elif k < 8:
-                sh.row(nrow).write(ncol, k, data_style)
-            elif k < 15:
-                sh.row(nrow + 1).write(ncol - 7, k, data_style)
-            else:
-                sh.row(nrow + 2).write(ncol - 14, k, data_style)
+            if key == 0:                                                                                  # 机构名称列
+                sh.write_merge(nrow, nrow + 2, ncol, ncol, value, name_style)
+            elif key in (1, 2):                                                                           # 车险险种列，计划任务列
+                sh.row(nrow).write(ncol, value, task_style)
+            elif key == 3:                                                                               # 车险累计保费列
+                sh.row(nrow).write(ncol, value, num_style)
+            elif key in (4, 5, 6):                                                                       # 车险同比增长率列、时间进度达成率列、计划任务达成率列
+                if key == 6 and value >=1:
+                    sh.row(nrow).write(ncol, value, percent_style_red)
+                else:
+                    sh.row(nrow).write(ncol, value, percent_style)
+            elif key == 7:                                                                              # 车险计划任务差额列
+                 sh.row(nrow).write(ncol, value, num_style)
+            elif key in (8, 9):                                                                          # 非车险险种列，计划任务列
+                sh.row(nrow + 1).write(ncol - 7, value, task_style)
+            elif key == 10:                                                                            # 非车险累计保费列
+                sh.row(nrow + 1).write(ncol - 7, value, num_style)
+            elif key in (11, 12, 13):                                                                # 非车险同比增长率列、时间进度达成率列、计划任务达成率列
+                if key == 13 and value >=1:
+                    sh.row(nrow + 1).write(ncol - 7, value, percent_style_red)
+                else:
+                    sh.row(nrow + 1).write(ncol - 7, value, percent_style)
+            elif key == 14:                                                                            # 非车险计划任务差额列
+                 sh.row(nrow + 1).write(ncol - 7, value, num_style)
+            elif key in (15, 16):                                                                      # 整体险种列，计划任务列
+                sh.row(nrow + 2).write(ncol - 14, value, bold_task_style)
+            elif key == 17:                                                                            # 整体累计保费列
+                sh.row(nrow + 2).write(ncol - 14, value, bold_num_style)
+            elif key in (18, 19, 20):                                                                # 整体同比增长率列、时间进度达成率列、计划任务达成率列
+                if key == 20 and value >=1:
+                    sh.row(nrow + 2).write(ncol - 14, value, bold_percent_style_red)
+                else:
+                    sh.row(nrow + 2).write(ncol - 14, value, bold_percent_style)
+            elif key == 21:                                                                            # 整体计划任务差额列
+                 sh.row(nrow + 2).write(ncol - 14, value, bold_num_style)         
 
             ncol += 1
         nrow += 3
         id += 1
 
-    ## 将排序后的内部团队数据写入表中，行号延续四级机构写入完的行号
-    #for datas in team_data_sort:
-    #    ncol = 0
-    #    for value in datas:
-    #        if ncol < 5:
-    #            data_style = task_style
-    #        elif ncol < 8:
-    #            data_style = num_style
-    #        elif ncol < 11:
-    #            data_style = percent_style
-    #        elif ncol < 14:
-    #            if value >= 1:
-    #                data_style = percent_style_red
-    #            else:
-    #                data_style = percent_style
-    #        else:
-    #            data_style = percent_style
+    # 将排序后的内部团队数据写入表中
+    for data in team_data_sort:
+        ncol = 0
+
+        if id % 2 == 1:
+            name_style.pattern = pattern_gray
+            task_style.pattern = pattern_gray
+            bold_task_style.pattern = pattern_gray
+            num_style.pattern = pattern_gray
+            bold_num_style.pattern = pattern_gray
+            percent_style.pattern = pattern_gray
+            bold_percent_style.pattern = pattern_gray
+            percent_style_red.pattern = pattern_gray
+            bold_percent_style_red.pattern = pattern_gray
+        else:
+            name_style.pattern = pattern_default
+            task_style.pattern = pattern_default
+            bold_task_style.pattern = pattern_default
+            num_style.pattern = pattern_default
+            bold_num_style.pattern = pattern_default
+            percent_style.pattern = pattern_default
+            bold_percent_style.pattern = pattern_default
+            percent_style_red.pattern = pattern_default
+            bold_percent_style_red.pattern = pattern_default
+
+        for key, value in enumerate(data):
+            # 第一列写入序号
+            if ncol == 0:                                                                                # 序号列
+                sh.write_merge(nrow, nrow + 2, ncol, ncol, id, task_style)
+                ncol += 1
             
-    #        if ncol == 0:
-    #            sh.row(nrow).write(ncol, nrow - 3, data_style)
-    #            ncol += 1
+            if key == 0:                                                                                  # 机构名称列
+                sh.write_merge(nrow, nrow + 2, ncol, ncol, value, name_style)
+            elif key in (1, 2):                                                                           # 车险险种列，计划任务列
+                sh.row(nrow).write(ncol, value, task_style)
+            elif key == 3:                                                                               # 车险累计保费列
+                sh.row(nrow).write(ncol, value, num_style)
+            elif key in (4, 5, 6):                                                                       # 车险同比增长率列、时间进度达成率列、计划任务达成率列
+                if key == 6 and value >=1:
+                    sh.row(nrow).write(ncol, value, percent_style_red)
+                else:
+                    sh.row(nrow).write(ncol, value, percent_style)
+            elif key == 7:                                                                              # 车险计划任务差额列
+                 sh.row(nrow).write(ncol, value, num_style)
+            elif key in (8, 9):                                                                          # 非车险险种列，计划任务列
+                sh.row(nrow + 1).write(ncol - 7, value, task_style)
+            elif key == 10:                                                                            # 非车险累计保费列
+                sh.row(nrow + 1).write(ncol - 7, value, num_style)
+            elif key in (11, 12, 13):                                                                # 非车险同比增长率列、时间进度达成率列、计划任务达成率列
+                if key == 13 and value >=1:
+                    sh.row(nrow + 1).write(ncol - 7, value, percent_style_red)
+                else:
+                    sh.row(nrow + 1).write(ncol - 7, value, percent_style)
+            elif key == 14:                                                                            # 非车险计划任务差额列
+                 sh.row(nrow + 1).write(ncol - 7, value, num_style)
+            elif key in (15, 16):                                                                      # 整体险种列，计划任务列
+                sh.row(nrow + 2).write(ncol - 14, value, bold_task_style)
+            elif key == 17:                                                                            # 整体累计保费列
+                sh.row(nrow + 2).write(ncol - 14, value, bold_num_style)
+            elif key in (18, 19, 20):                                                                # 整体同比增长率列、时间进度达成率列、计划任务达成率列
+                if key == 20 and value >=1:
+                    sh.row(nrow + 2).write(ncol - 14, value, bold_percent_style_red)
+                else:
+                    sh.row(nrow + 2).write(ncol - 14, value, bold_percent_style)
+            elif key == 21:                                                                            # 整体计划任务差额列
+                 sh.row(nrow + 2).write(ncol - 14, value, bold_num_style)         
 
-    #        sh.row(nrow).write(ncol, value, data_style)
-    #        ncol += 1
-    #    nrow += 1
-    
-    ## 最后统计分公司整体保费
-    #name = "分公司整体"
-    #che = Stats(name, "车险", sql)
-    #fei = Stats(name, "非车险", sql)
-    #zheng = Stats(name, "整体", sql)
-    #data = (name, che.risk, che.task, che.this_year, che.year_tong_bi, che.time_progress, che.task_progress, che.task_balance,
-    #            fei.risk, fei.task, fei.this_year, fei.year_tong_bi, fei.time_progress, fei.task_progress, fei.task_balance,
-    #            zheng.risk, zheng.task, zheng.this_year, zheng.year_tong_bi, zheng.time_progress, zheng.task_progress, zheng.task_balance)
+            ncol += 1
+        nrow += 3
+        id += 1
 
-    #ncol = 0
-    #for value in datas:
-    #    if ncol < 5:
-    #        data_style = task_style
-    #    elif ncol < 8:
-    #        data_style = num_style
-    #    else:
-    #        data_style = percent_style
+    # 最后统计分公司整体保费
+    name = "分公司整体"
+    che = Stats(name, "车险", sql)
+    fei = Stats(name, "非车险", sql)
+    zheng = Stats(name, "整体", sql)
+    datas = (name, che.risk, che.task, che.this_year, che.year_tong_bi, che.time_progress, che.task_progress, che.task_balance,
+                fei.risk, fei.task, fei.this_year, fei.year_tong_bi, fei.time_progress, fei.task_progress, fei.task_balance,
+                zheng.risk, zheng.task, zheng.this_year, zheng.year_tong_bi, zheng.time_progress, zheng.task_progress, zheng.task_balance)
+
+     # 将分公司数据写入表中
+    name_style.pattern = pattern_gray
+    task_style.pattern = pattern_gray
+    bold_task_style.pattern = pattern_gray
+    num_style.pattern = pattern_gray
+    bold_num_style.pattern = pattern_gray
+    percent_style.pattern = pattern_gray
+    bold_percent_style.pattern = pattern_gray
+    percent_style_red.pattern = pattern_gray
+    bold_percent_style_red.pattern = pattern_gray
+
+    ncol = 0
+    for key, value in enumerate(datas):
+        # 第一列写入序号
+        if ncol == 0:                                                                                # 序号列
+            sh.write_merge(nrow, nrow + 2, ncol, ncol, id, task_style)
+            ncol += 1
             
-    #    if ncol == 0:
-    #        sh.row(nrow).write(ncol, nrow - 3, data_style)
-    #        ncol += 1
+        if key == 0:                                                                                  # 机构名称列
+            sh.write_merge(nrow, nrow + 2, ncol, ncol, value, name_style)
+        elif key in (1, 2):                                                                           # 车险险种列，计划任务列
+            sh.row(nrow).write(ncol, value, task_style)
+        elif key == 3:                                                                               # 车险累计保费列
+            sh.row(nrow).write(ncol, value, num_style)
+        elif key in (4, 5, 6):                                                                       # 车险同比增长率列、时间进度达成率列、计划任务达成率列
+            if key == 6 and value >=1:
+                sh.row(nrow).write(ncol, value, percent_style_red)
+            else:
+                sh.row(nrow).write(ncol, value, percent_style)
+        elif key == 7:                                                                              # 车险计划任务差额列
+                sh.row(nrow).write(ncol, value, num_style)
+        elif key in (8, 9):                                                                          # 非车险险种列，计划任务列
+            sh.row(nrow + 1).write(ncol - 7, value, task_style)
+        elif key == 10:                                                                            # 非车险累计保费列
+            sh.row(nrow + 1).write(ncol - 7, value, num_style)
+        elif key in (11, 12, 13):                                                                # 非车险同比增长率列、时间进度达成率列、计划任务达成率列
+            if key == 13 and value >=1:
+                sh.row(nrow + 1).write(ncol - 7, value, percent_style_red)
+            else:
+                sh.row(nrow + 1).write(ncol - 7, value, percent_style)
+        elif key == 14:                                                                            # 非车险计划任务差额列
+                sh.row(nrow + 1).write(ncol - 7, value, num_style)
+        elif key in (15, 16):                                                                      # 整体险种列，计划任务列
+            sh.row(nrow + 2).write(ncol - 14, value, bold_task_style)
+        elif key == 17:                                                                            # 整体累计保费列
+            sh.row(nrow + 2).write(ncol - 14, value, bold_num_style)
+        elif key in (18, 19, 20):                                                                # 整体同比增长率列、时间进度达成率列、计划任务达成率列
+            if key == 20 and value >=1:
+                sh.row(nrow + 2).write(ncol - 14, value, bold_percent_style_red)
+            else:
+                sh.row(nrow + 2).write(ncol - 14, value, bold_percent_style)
+        elif key == 21:                                                                            # 整体计划任务差额列
+                sh.row(nrow + 2).write(ncol - 14, value, bold_num_style)         
 
-    #    sh.row(nrow).write(ncol, value, data_style)
-    #    ncol += 1
+        ncol += 1
