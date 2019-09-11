@@ -108,7 +108,7 @@ def main():
     book = xlwt.Workbook(encoding = "utf-8")
 
     #设置昆明机构周报工作表
-    set_kun_ming_week(book, sql)
+    #set_kun_ming_week(book, sql)
 
     # 设置三级机构周报工作表
     set_zhong_zhi_week(book, sql)
@@ -117,7 +117,7 @@ def main():
     set_ji_gou_week(book, sql)
 
     # 设置同比增长率统计表
-    set_tong_bi(book, sql)
+    #set_tong_bi(book, sql)
     
     # 保存数据至Excel工作表中
     book.save("数据统计表.xlsx")

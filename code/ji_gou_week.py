@@ -27,7 +27,7 @@ def ji_gou_week(sh, sql):
     # 写入表中数据的时间统计范围
     nrow += 1
     explanation_style = cell_style(height = 10)
-    explanation_str = "说明：表格中任务达成情况“正数”表示已超额完成全年任务，“负数”表示全面任务的缺口"
+    explanation_str = "说明：表格中任务达成情况“正数”表示已超额完成全年任务，“负数”表示全年任务的缺口"
     sh.write_merge(nrow, nrow, 0, 8, explanation_str, explanation_style)
 
     # 开始写入表头
