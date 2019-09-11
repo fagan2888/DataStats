@@ -81,28 +81,25 @@ def zhong_zhi_week(sh, sql):
     
     # 获取机构数据，并写入表中
     nrow = 4
+    id = 1
     for name in zhong_zhi_name:
         che = Stats(name, "车险", sql, "中心支公司")
-        cai_chan = Stats(name, "财产险", sql, "中心支公司")
-        ren_shen = Stats(name, "人身险", sql, "中心支公司")
+        ren = Stats(name, "人身险", sql, "中心支公司")
+        cai = Stats(name, "财产险", sql, "中心支公司")
         zheng = Stats(name, "整体", sql, "中心支公司")
-        zhong_zhi_data = (name, che.task, cai_chan.task, ren_shen.task, zheng.task, che.this_year, cai_chan.this_year, ren_shen.this_year, 
-                          zheng.this_year, che.time_progress, cai_chan.time_progress, ren_shen.time_progress, 
-                          zheng.time_progress, che.year_tong_bi, cai_chan.year_tong_bi, ren_shen.year_tong_bi, zheng.year_tong_bi, 
-                          che.task_progress, cai_chan.task_progress, ren_shen.task_progress, 
-                          zheng.task_progress)
+        datas = ((name), (che.risk, che.task, che.this_year, che.year_tong_bi, che.time_progress, che.task_progress, che.task_balance)
+                          , (ren.risk, ren.task, ren.this_year, ren.year_tong_bi, ren.time_progress, ren.task_progress, ren.task_balance)
+                          , (cai.risk, cai.task, cai.this_year, cai_chanyear_tong_bi, cai.time_progress, cai.task_progress, cai.task_balance)
+                          , (zheng.risk, zheng.task, zheng.this_year, zheng.year_tong_bi, zheng.time_progress, zheng.task_progress, zheng.task_balance))
+
         ncol = 0
-        for value in zhong_zhi_data:
-            if ncol < 5:
-                data_style = task_style
-            elif ncol < 9:
-                data_style = num_style
-            else:
-                data_style = percent_style
-            
-            sh.row(nrow).write(ncol, value, data_style)
-            sh.row(nrow).set_style(row_style) 
-            ncol += 1
+        for data in datas:
+            if ncol == 0:
+                sh.write_merge(nrow, nrow +3, ncol, ncol, id, task_style)
+                ncol += 1
+
+        
+        id += 1
 
         logging.debug("{0}信息写入完成".format(name))
         nrow += 1

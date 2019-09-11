@@ -13,53 +13,62 @@ def ji_gou_week(sh, sql):
     """写入四级机构签单保费达成情况表"""
 
     # 写入表标题
+    nrow = 0                                            # 行记录器，用以记录数据写入的行
     title_style = cell_style(height = 14)
     title_str = "2019年四级机构签单保费达成情况"
-    sh.write_merge(0, 0, 0, 8, title_str, title_style)
+    sh.write_merge(nrow, nrow, 0, 8, title_str, title_style)
 
     # 写入表中数据的时间统计范围
+    nrow += 1
     date_style = cell_style(height = 10)
     date_str = "数据统计范围：{0}至{1}".format("2019-01-01", date.today()-timedelta(days = 1))
-    sh.write_merge(1, 1, 0, 8, date_str, date_style)
+    sh.write_merge(nrow, nrow, 0, 8, date_str, date_style)
+
+    # 写入表中数据的时间统计范围
+    nrow += 1
+    explanation_style = cell_style(height = 10)
+    explanation_str = "说明：表格中任务达成情况“正数”表示已超额完成全年任务，“负数”表示全面任务的缺口"
+    sh.write_merge(nrow, nrow, 0, 8, explanation_str, explanation_style)
 
     # 开始写入表头
+    nrow += 1
     header_style = cell_style(bold = True, wrap = 1, borders = True)
 
     # 序号列列宽及标题
     sh.col(0).width = 256 * 4
-    sh.write_merge(2, 2, 0, 0, "序号", header_style)
+    sh.write_merge(nrow, nrow, 0, 0, "序号", header_style)
 
     # 机构名称列列宽及标题
     sh.col(1).width = 256 * 11
-    sh.write_merge(2, 2, 1, 1, "机构名称", header_style)
+    sh.write_merge(nrow, nrow, 1, 1, "机构名称", header_style)
 
     # 险种列列宽及标题
     sh.col(2).width = 256 * 9
-    sh.row(2).write(2, "险种", header_style)
+    sh.row(nrow).write(2, "险种", header_style)
 
     # 计划任务列列宽及标题
     sh.col(3).width = 256 * 10
-    sh.row(2).write(3, "计划任务", header_style)
+    sh.row(nrow).write(3, "计划任务", header_style)
 
     # 年度累计保费列列宽及标题
-    sh.col(4).width = 256 * 11
-    sh.row(2).write(4, "累计保费", header_style)
+    sh.col(4).width = 256 * 12
+    sh.row(nrow).write(4, "累计保费", header_style)
 
     # 同比增长率列列宽及标题
     sh.col(5).width = 256 * 12
-    sh.row(2).write(5, "同比增长", header_style)
+    sh.row(nrow).write(5, "同比增长", header_style)
 
     # 时间进度达成率列列宽及标题
     sh.col(6).width = 256 * 13
-    sh.row(2).write(6, "时间进度", header_style)
+    sh.row(nrow).write(6, "时间进度", header_style)
 
     # 计划任务达成率列列宽及标题
     sh.col(7).width = 256 * 12
-    sh.row(2).write(7, "任务达成率", header_style)
+    sh.row(nrow).write(7, "任务达成率", header_style)
 
     # 任务达成情况列列宽及标题
     sh.col(8).width = 256 * 11
-    sh.row(2).write(8, "任务达成情况", header_style)
+    sh.row(nrow).write(8, "任务达成情况", header_style)
 
     # 四级机构名称列表
     ji_gou_name = ("百大国际", "春怡雅苑", "香榭丽园", "宜良", "东川", "安宁", "春之城", "勐海", "勐腊", "师宗", "陆良", "宣威", "罗平", 
@@ -71,7 +80,7 @@ def ji_gou_week(sh, sql):
                         "曲靖营业一部", "大理中支本部", "分公司本部")
 
     # 记录机构数据的列表
-    ji_gou_data = []
+    ji_gou_datas = []
 
     # 获取四级机构的各项数据
     for name in ji_gou_name:
@@ -81,11 +90,11 @@ def ji_gou_week(sh, sql):
         data = (name, che.risk, che.task, che.this_year, che.year_tong_bi, che.time_progress, che.task_progress, che.task_balance,
                 fei.risk, fei.task, fei.this_year, fei.year_tong_bi, fei.time_progress, fei.task_progress, fei.task_balance,
                 zheng.risk, zheng.task, zheng.this_year, zheng.year_tong_bi, zheng.time_progress, zheng.task_progress, zheng.task_balance)
-        ji_gou_data.append(data)
+        ji_gou_datas.append(data)
         logging.debug("{0}信息统计完成".format(name))
     
     # 记录内部团队数据的列表
-    team_data = []
+    team_datas = []
 
     # 获取内部团队的各项数据
     for name in team_name:
@@ -95,12 +104,12 @@ def ji_gou_week(sh, sql):
         data = (name, che.risk, che.task, che.this_year, che.year_tong_bi, che.time_progress, che.task_progress, che.task_balance,
                 fei.risk, fei.task, fei.this_year, fei.year_tong_bi, fei.time_progress, fei.task_progress, fei.task_balance,
                 zheng.risk, zheng.task, zheng.this_year, zheng.year_tong_bi, zheng.time_progress, zheng.task_progress, zheng.task_balance)
-        team_data.append(data)
+        team_datas.append(data)
         logging.debug("{0}信息统计完成".format(name))
 
     # 对机构、内部团队数据按年度整体保费按降序排序，四级机构与内部团队分别排序
-    ji_gou_data_sort = sorted(ji_gou_data, key = lambda d : d[17], reverse = True)
-    team_data_sort = sorted(team_data, key = lambda d : d[17], reverse = True)
+    ji_gou_datas_sort = sorted(ji_gou_datas, key = lambda d : d[17], reverse = True)
+    team_datas_sort = sorted(team_datas, key = lambda d : d[17], reverse = True)
 
     # 建立三种不同数据类型的数据显示样式
     name_style = cell_style(height = 12, borders = True, wrap = 1)
@@ -122,11 +131,11 @@ def ji_gou_week(sh, sql):
     pattern_default.pattern_fore_colour = 64
 
     # 从第4行开始写入数据
-    nrow = 3
+    nrow += 1
     id = 1
 
     # 将排序后的四级机构数据写入表中
-    for data in ji_gou_data_sort:
+    for data in ji_gou_datas_sort:
         ncol = 0
 
         if id % 2 == 1:
@@ -197,7 +206,7 @@ def ji_gou_week(sh, sql):
         id += 1
 
     # 将排序后的内部团队数据写入表中
-    for data in team_data_sort:
+    for data in team_datas_sort:
         ncol = 0
 
         if id % 2 == 1:
