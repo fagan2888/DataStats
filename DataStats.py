@@ -5,7 +5,9 @@ import logging
 import os
 import sys
 import shutil
+
 from datetime import datetime
+from io import StringIO
 
 dirname = os.getcwd()
 code_path = dirname + r'\code'
@@ -23,19 +25,26 @@ logging.basicConfig(level = logging.DEBUG, format = ' %(asctime)s | %(levelname)
 
 
 
-def update_data(sql):
+def update_data(db_file):
     """
     更新数据库，数据库更新完毕后将原始数据文件进行备份
     同时避免多次无意义的更新数据库
     """
     table_name = "昆明机构周报.xlsx"
     if os.path.isfile(table_name):
-        db_update(table_name, sql)
+        db_update(table_name, db_file)
         backup_path = dirname + r"\Backup"
         backup_name = backup_path +"\\" + table_name[:-5] + datetime.today().strftime("%Y%m%d") + ".xlsx"
         shutil.copyfile(table_name, backup_name)
         os.remove(table_name)
+
+    memory_str_sql = db_file.iterdump()
+    db_memory = MySql(":memory:")
+    db_memory.executescript(memory_str_sql)
+    db_file.close()
+    
     logging.debug("数据库更新完成\n")
+    return db_memory
 
 
 def set_kun_ming_week(book, sql):
@@ -98,11 +107,11 @@ def main():
     logging.debug("……程序开始运行……")
         
     # 建立数据库连接
-    sql = MySql(r"Data\data.db")
+    db_file = MySql(r"Data\data.db")
     logging.debug("数据库连接成功")
     
     # 更新数据库
-    update_data(sql)
+    sql = update_data(db_file)
     
     # 建立Excel工作簿
     book = xlwt.Workbook(encoding = "utf-8")
@@ -123,7 +132,7 @@ def main():
     book.save("数据统计表.xlsx")
 
     # 关闭数据库
-    sql.closs()
+    sql.close()
     logging.debug("数据库关闭")
     logging.debug("……程序运行结束……")
 

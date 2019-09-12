@@ -1,5 +1,6 @@
 import sqlite3
 import logging
+from io import StringIO
 
 logging.disable(logging.DEBUG)
 logging.basicConfig(level = logging.DEBUG, format = ' %(asctime)s | %(levelname)s | %(message)s' )
@@ -50,13 +51,32 @@ class MySql():
         """
         self._cur.execute(sql)
     
-    def  commit(self):
+    def commit(self):
         """
         向数据库提交事务，无参数，无返回值
         """
         self._conn.commit()
+    
+    def iterdump(self):
+        """
+        将数据库内容以文本的形式进行保存，方便与将数据在不同数据库见转移
 
-    def closs(self):
+        返回值：
+            返回一个StringIO对象
+        """
+        memory_sql_str = StringIO()
+
+        for line in self._conn.iterdump():
+            memory_sql_str.write(f"{line}\n")
+        return memory_sql_str
+
+    def executescript(self, memory_sql_str):
+        """
+        批量执行SQL语句脚本
+        """
+        self._cur.executescript(memory_sql_str.getvalue())
+
+    def close(self):
         """
         关闭数据库，无参数，无返回值
         """
