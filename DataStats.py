@@ -1,4 +1,4 @@
-# _*_ coding: utf-8 _*_
+﻿# _*_ coding: utf-8 _*_
 
 import xlwt
 import logging
@@ -117,7 +117,7 @@ def main():
     book = xlwt.Workbook(encoding = "utf-8")
 
     #设置昆明机构周报工作表
-    #set_kun_ming_week(book, sql)
+    set_kun_ming_week(book, sql)
 
     # 设置三级机构周报工作表
     set_zhong_zhi_week(book, sql)
