@@ -10,6 +10,7 @@
     <OutputPath>.</OutputPath>
     <Name>DataStats</Name>
     <RootNamespace>DataStats</RootNamespace>
+    <InterpreterId>Global|PythonCore|3.7</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,15 +23,18 @@
   <ItemGroup>
     <Compile Include="code\cell_style.py" />
     <Compile Include="code\db_update.py" />
-    <Compile Include="code\ji_gou_week.py" />
+    <Compile Include="code\ji_gou_year.py" />
     <Compile Include="code\kun_ming_week.py" />
     <Compile Include="code\my_date.py" />
     <Compile Include="code\my_sql.py" />
-    <Compile Include="code\stats.py" />
-    <Compile Include="code\tong_bi_growth_rate.py">
+    <Compile Include="code\seven_days.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="code\zhong_zhi_week.py" />
+    <Compile Include="code\stats.py" />
+    <Compile Include="code\tong_bi_ten_days.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="code\zhong_zhi_year.py" />
     <Compile Include="DataStats.py" />
   </ItemGroup>
   <ItemGroup>
@@ -41,6 +45,9 @@
   <ItemGroup>
     <Content Include="Backup\昆明机构周报20190906.xlsx" />
     <Content Include="Data\data.db" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.7" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
