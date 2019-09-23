@@ -126,7 +126,7 @@ def main():
     set_ji_gou_week(book, sql)
 
     # 设置同比增长率统计表
-    #set_tong_bi(book, sql)
+    set_tong_bi(book, sql)
     
     # 保存数据至Excel工作表中
     book.save("数据统计表.xlsx")
