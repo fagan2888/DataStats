@@ -6,13 +6,13 @@ class Stats(object):
     以一个机构为实例，返回计算报表相关数据
     """
     def __init__(self, name, risk, sql, level="机构"):
-        self._jian_cheng = name                                 # 机构简称
-        self._date = MyDate()                                     # 日期对象
-        self._sql = sql                                                  # 数据库对象
-        self._risk = risk                                                 # 险种
-        self._level = level                                             # 机构层级（中心支公司或机构）
+        self._jian_cheng = name             # 机构简称
+        self._date = MyDate()               # 日期对象
+        self._sql = sql                     # 数据库对象
+        self._risk = risk                   # 险种
+        self._level = level                 # 机构层级（中心支公司或机构）
 
-    @property    
+    @property
     def jian_cheng(self):
         """返回机构简称"""
         return self._jian_cheng
@@ -24,9 +24,9 @@ class Stats(object):
 
     @property
     def risk(self):
-        """返回险种"""            
+        """返回险种"""
         return self._risk
-    
+
     @property
     def level(self):
         """返回机构层级"""
@@ -43,11 +43,11 @@ class Stats(object):
             self._name = "祥云"
         elif self.jian_cheng == "曲靖营业一部":
             self._name = "曲靖营业一部"
-        elif self.jian_cheng =="曲靖中支本部":
+        elif self.jian_cheng == "曲靖中支本部":
             self._name = "曲靖中支本部"
-        elif self.jian_cheng =="分公司本部":
+        elif self.jian_cheng == "分公司本部":
             self._name = "分公司本部"
-        elif self.jian_cheng =="大理中支本部":
+        elif self.jian_cheng == "大理中支本部":
             self._name = "大理中支本部"
         else:
             sql_str = ("SELECT {0} FROM [{0}] WHERE {0}简称 = '{1}'".format(self.level, self.jian_cheng))
