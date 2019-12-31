@@ -63,7 +63,7 @@ def tong_bi_growth_rate(sh, sql):
 
     # 写入年度统计表统计数据
     nrow += 1
-    names = ("昆明", "曲靖", "文山", "大理", "保山", "版纳", "怒江", "巧家", "分公司整体")
+    names = ("昆明", "曲靖", "文山", "大理", "保山", "版纳", "怒江", "昭通", "分公司整体")
     num_style = cell_style(height = 12, borders = True, num_format = '0.00')
     percent_style = cell_style(height=12, borders=True, num_format='0.00%')
     wei_xin_str = ""                                                                                                     # 用于存储发布到微信的文本信息
@@ -153,7 +153,7 @@ def tong_bi_growth_rate(sh, sql):
 
     # 写入月度统计表统计数据
     nrow += 1
-    names = ("昆明", "曲靖", "文山", "大理", "保山", "版纳", "怒江", "巧家", "分公司整体")
+    names = ("昆明", "曲靖", "文山", "大理", "保山", "版纳", "怒江", "昭通", "分公司整体")
     num_style = cell_style(height = 12, borders = True, num_format = '0.00')
     percent_style = cell_style(height=12, borders=True, num_format='0.00%')
 
@@ -243,7 +243,7 @@ def tong_bi_growth_rate(sh, sql):
 
     # 写入旬度统计表统计数据
     nrow += 1
-    names = ("昆明", "曲靖", "文山", "大理", "保山", "版纳", "怒江", "巧家", "分公司整体")
+    names = ("昆明", "曲靖", "文山", "大理", "保山", "版纳", "怒江", "昭通", "分公司整体")
     num_style = cell_style(height = 12, borders = True, num_format = '0.00')
     percent_style = cell_style(height=12, borders=True, num_format='0.00%')
 

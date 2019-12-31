@@ -72,7 +72,7 @@ def zhong_zhi_week(sh, sql):
     sh.row(nrow).write(8, "任务达成情况", header_style)
 
     # 设置中支名称列表及单元格样式
-    zhong_zhi_name = ("昆明", "曲靖", "文山", "大理", "版纳", "保山", "巧家", "怒江", "分公司整体")
+    zhong_zhi_name = ("昆明", "曲靖", "文山", "大理", "版纳", "保山", "昭通", "怒江", "分公司整体")
     task_style = cell_style(height = 12, borders = True, num_format = '0')
     bold_task_style = cell_style(height = 12, bold=True, borders = True, num_format = '0')
     num_style = cell_style(height = 12, borders = True, num_format = '0.00')
