@@ -1,16 +1,16 @@
-from my_date import MyDate
+import sqlite3
 
 
 class Stats(object):
     """
     以一个机构为实例，返回计算报表相关数据
     """
-    def __init__(self, name, risk, sql, level="机构"):
-        self._jian_cheng = name             # 机构简称
-        self._date = MyDate()               # 日期对象
-        self._sql = sql                     # 数据库对象
-        self._risk = risk                   # 险种
-        self._level = level                 # 机构层级（中心支公司或机构）
+    def __init__(self, name, risk):
+        self._jian_cheng = name  # 机构简称
+        self._risk = risk  # 险种
+        self._conn = sqlite3.connect(r'Data\data.db')
+        
+
 
     @property
     def jian_cheng(self):
