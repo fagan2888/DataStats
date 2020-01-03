@@ -4,7 +4,7 @@ from openpyxl.styles import (Alignment, Border, Color, Font, NamedStyle,
 
 
 def style(wb):
-    fill_color = 'E5E5E5'
+    fill_color = 'CCCCCC'
 
     font_12_bold = Font(name='微软雅黑',
                         size=12,
