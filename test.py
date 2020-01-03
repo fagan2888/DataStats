@@ -1,0 +1,60 @@
+import sqlite3
+import logging
+from openpyxl import load_workbook
+
+
+def update():
+    """
+    读取从MIS系统导出的Excel表中的内容
+    清空数据库中今年的数据
+    将今年的新数据写入数据库中
+    """
+    conn = sqlite3.connect(r'Data\data.db')
+    logging.debug('数据库连接成功')
+    cur = conn.cursor()
+
+    table = '销售团队'
+
+    # 清空原数据库数据
+    str_sql = f"DELETE FROM [{table}]"
+    cur.execute(str_sql)
+    conn.commit()
+    logging.debug("数据库数据清空完毕")
+
+    # 读入Excel表格数据
+    wb = load_workbook(r'Back\销售团队信息对照表.xlsx')
+    ws = wb['2020']
+
+    logging.debug("Excel 文件读入成功")
+    logging.debug(f"需要导入{ws.max_row}条数据")
+
+    nrow = 1
+    # 将Excel数据写入数据库中
+    for row in ws.iter_rows(min_row=2,
+                            max_row=ws.max_row,
+                            min_col=1,
+                            max_col=ws.max_column):
+        str_sql = f"INSERT INTO '{table}' VALUES ("
+        for v in row:
+            str_sql += f"'{v.value}', "
+
+        str_sql = str_sql[:-2] + ")"
+
+        cur.execute(str_sql)
+
+        nrow += 1
+        if nrow % 100 == 0:
+            logging.debug(f'已导入 {nrow} / {ws.max_row} 条数据')
+
+    logging.debug('数据写入数据库完成')
+
+    conn.commit()
+
+    logging.debug("数据库事务提交完成")
+
+    cur.close()
+    conn.close()
+
+
+if __name__ == '__main__':
+    update()

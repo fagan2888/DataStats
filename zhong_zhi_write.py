@@ -7,6 +7,8 @@ from zhong_zhi_tong_ji import Tong_ji
 
 def zhong_zhi_write(ws):
 
+    logging.debug('开始写入三级机构数据')
+
     month = datetime.now().strftime('%m')
     day = (datetime.now() - timedelta(days=1)).strftime('%d')
 
@@ -59,7 +61,9 @@ def zhong_zhi_write(ws):
         else:
             xu_hao += 1
 
-    logging.debug('机构数据写入完成')
+        logging.debug(f'{name}数据写入完成')
+
+    logging.debug('全部机构数据写入完成')
 
     # 合并 标题行
     ws.merge_cells(start_row=1,
@@ -154,3 +158,4 @@ def zhong_zhi_write(ws):
 
     logging.debug('列宽调整完成')
     logging.debug('三级机构数据统计表写入完成')
+    print("-" * 60)

@@ -59,6 +59,8 @@ def update():
     conn.commit()
 
     logging.debug("数据库事务提交完成")
+    logging.debug("数据库更新操作完成")
 
     cur.close()
     conn.close()
+    print("-" * 60)

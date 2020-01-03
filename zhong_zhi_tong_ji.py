@@ -55,47 +55,35 @@ class Tong_ji(object):
         return self._xian_zhong
 
     @property
-    def quan_cheng(self):
-        '''
-        返回机构全称
-        '''
-        if self.jian_cheng == '分公司整体':
-            return '分公司整体'
-        else:
-            str_sql = f"SELECT 中心支公司 \
-                    FROM 中心支公司 \
-                    WHERE 中心支公司简称 = '{self.jian_cheng}'"
-
-            self._cur.execute(str_sql)
-            for value in self._cur.fetchone():
-                return value
-
-    @property
     def lei_ji_bao_fei(self):
         '''
         返回年底累计保费
         '''
         if self.jian_cheng == '分公司整体':
             if self.xian_zhong == '整体':
-                str_sql = f"SELECT SUM([签单保费/批改保费]) \
+                str_sql = f"SELECT SUM ([签单保费/批改保费]) \
                         FROM [{self.jin_nian}年] \
                         WHERE [投保确认日期] < '{self.jin_tian}'"
             else:
-                str_sql = f"SELECT SUM([签单保费/批改保费]) \
+                str_sql = f"SELECT SUM ([签单保费/批改保费]) \
                         FROM [{self.jin_nian}年] \
-                        WHERE [车险/财产险/人身险] = '{self.xian_zhong}' \
+                        WHERE  [车险/财产险/人身险] = '{self.xian_zhong}' \
                         AND [投保确认日期] < '{self.jin_tian}'"
         else:
             if self.xian_zhong == '整体':
-                str_sql = f"SELECT SUM([签单保费/批改保费]) \
+                str_sql = f"SELECT SUM ([签单保费/批改保费]) \
                         FROM [{self.jin_nian}年] \
-                        WHERE [中心支公司] = '{self.quan_cheng}' \
+                        JOIN [中心支公司] \
+                        ON [{self.jin_nian}年].[中心支公司] = [中心支公司].[中心支公司] \
+                        WHERE [中心支公司].[中心支公司简称] = '{self.jian_cheng}' \
                         AND [投保确认日期] < '{self.jin_tian}'"
             else:
-                str_sql = f"SELECT SUM([签单保费/批改保费]) \
+                str_sql = f"SELECT SUM ([签单保费/批改保费]) \
                         FROM [{self.jin_nian}年] \
-                        WHERE [车险/财产险/人身险] = '{self.xian_zhong}' \
-                        AND [中心支公司] = '{self.quan_cheng}' \
+                        JOIN [中心支公司] \
+                        ON [{self.jin_nian}年].[中心支公司] = [中心支公司].[中心支公司] \
+                        WHERE  [车险/财产险/人身险] = '{self.xian_zhong}' \
+                        AND [中心支公司].[中心支公司简称] = '{self.jian_cheng}' \
                         AND [投保确认日期] < '{self.jin_tian}'"
 
         self._cur.execute(str_sql)
@@ -127,13 +115,17 @@ class Tong_ji(object):
             if self.xian_zhong == '整体':
                 str_sql = f"SELECT SUM([签单保费/批改保费]) \
                         FROM [{year}年] \
-                        WHERE [中心支公司] = '{self.quan_cheng}' \
+                        JOIN [中心支公司] \
+                        ON [{year}年].[中心支公司] = [中心支公司].[中心支公司] \
+                        WHERE [中心支公司].[中心支公司简称] = '{self.jian_cheng}' \
                         AND [投保确认日期] < '{date}'"
             else:
                 str_sql = f"SELECT SUM([签单保费/批改保费]) \
                         FROM [{year}年] \
-                        WHERE [车险/财产险/人身险] = '{self.xian_zhong}' \
-                        AND [中心支公司] = '{self.quan_cheng}' \
+                        JOIN [中心支公司] \
+                        ON [{year}年].[中心支公司] = [中心支公司].[中心支公司] \
+                        WHERE  [车险/财产险/人身险] = '{self.xian_zhong}' \
+                        AND [中心支公司].[中心支公司简称] = '{self.jian_cheng}' \
                         AND [投保确认日期] < '{date}'"
 
         self._cur.execute(str_sql)
