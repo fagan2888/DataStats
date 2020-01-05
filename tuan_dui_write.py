@@ -1,6 +1,5 @@
 import logging
-from datetime import datetime
-from datetime import timedelta
+import sqlite3
 
 from tuan_dui_tong_ji import Tong_ji
 
@@ -9,8 +8,16 @@ def tuan_dui_write(ws):
 
     logging.debug('开始写入内部团队数据')
 
-    month = datetime.now().strftime('%m')
-    day = (datetime.now() - timedelta(days=1)).strftime('%d')
+    conn = sqlite3.connect(r"Data\data.db")
+    cur = conn.cursor()
+
+    str_sql = "SELECT MAX([投保确认日期]) \
+               FROM   [2020年]"
+    cur.execute(str_sql)
+    ri_qi = cur.fetchone()[0]
+
+    month = ri_qi[5:7]
+    day = ri_qi[8:10]
 
     row = ['2020年内部团队数据统计表']
     ws.append(row)
@@ -34,7 +41,7 @@ def tuan_dui_write(ws):
                   '保山中支本部', '保山中支销售一部', '保山中支销售二部',
                   '怒江中支本部', '怒江销售一部']
 
-    xian_zhong = ['车险', '非车险', '整体']
+    xian_zhong = ['车险', '非车险', '驾意险', '整体']
     xu_hao = ''
 
     for name in ming_cheng:
@@ -43,8 +50,8 @@ def tuan_dui_write(ws):
             row = [xu_hao,
                    tong_ji.jian_cheng,
                    tong_ji.xian_zhong,
-                   tong_ji.lei_ji_bao_fei,
-                   tong_ji.yi_nian_lei_ji_bao_fei,
+                   tong_ji.nian_bao_fei,
+                   tong_ji.yi_nian_bao_fei,
                    tong_ji.yi_nian_tong_bi]
 
             ws.append(row)
@@ -71,16 +78,16 @@ def tuan_dui_write(ws):
                    end_column=ws.max_column)
 
     # 合并 序号列和机构名称列
-    for i in range(4, ws.max_row, 3):
+    for i in range(4, ws.max_row, 4):
         # 合并 序号列
         ws.merge_cells(start_row=i,
                        start_column=1,
-                       end_row=i+2,
+                       end_row=i+3,
                        end_column=1)
         # 合并 机构名称列
         ws.merge_cells(start_row=i,
                        start_column=2,
-                       end_row=i+2,
+                       end_row=i+3,
                        end_column=2)
 
     logging.debug('单元格合并完成')
@@ -97,7 +104,7 @@ def tuan_dui_write(ws):
                 r.style = 'shuo_ming'
             elif nrow == 3:
                 r.style = 'xiao_biao_ti'
-            elif nrow % 3 == 0:     # 但行号除以 4余 3时则为整体保费行，加粗处理
+            elif nrow % 4 == 3:     # 但行号除以 4余 3时则为整体保费行，加粗处理
                 if fill is True:
                     if col <= 3:
                         r.style = 'wen_zi_cu_hui'
@@ -131,12 +138,18 @@ def tuan_dui_write(ws):
             col += 1
         nrow += 1
 
-        # 每隔 4行改变一次是否有背景色
-        if nrow % 3 == 1:
-            if fill is True:
-                fill = False
-            else:
-                fill = True
+        fill_row = [8, 9, 10, 11,
+                    16, 17, 18, 19,
+                    32, 33, 34, 35,
+                    44, 45, 46, 47,
+                    56, 57, 58, 59,
+                    64, 65, 66, 67,
+                    76, 77, 78, 79]
+
+        if nrow in fill_row:
+            fill = True
+        else:
+            fill = False
 
     logging.debug('单元格样式写入完成')
 

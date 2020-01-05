@@ -1,6 +1,5 @@
 import logging
-from datetime import datetime
-from datetime import timedelta
+import sqlite3
 
 from zhong_zhi_tong_ji import Tong_ji
 
@@ -9,8 +8,16 @@ def zhong_zhi_write(ws):
 
     logging.debug('开始写入三级机构数据')
 
-    month = datetime.now().strftime('%m')
-    day = (datetime.now() - timedelta(days=1)).strftime('%d')
+    conn = sqlite3.connect(r"Data\data.db")
+    cur = conn.cursor()
+
+    str_sql = "SELECT MAX([投保确认日期]) \
+               FROM   [2020年]"
+    cur.execute(str_sql)
+    ri_qi = cur.fetchone()[0]
+
+    month = ri_qi[5:7]
+    day = ri_qi[8:10]
 
     row = ['2020年三级机构数据统计表']
     ws.append(row)
@@ -30,12 +37,12 @@ def zhong_zhi_write(ws):
     zhong_zhi = []
     for name in ming_cheng:
         tong_ji = Tong_ji(name, '整体')
-        row = [name, tong_ji.lei_ji_bao_fei]
+        row = [name, tong_ji.nian_bao_fei]
         zhong_zhi.append(row)
 
     zhong_zhi_sort = sorted(zhong_zhi, key=lambda r: r[1], reverse=True)
 
-    xian_zhong = ['车险', '人身险', '财产险', '整体']
+    xian_zhong = ['车险', '人身险', '财产险', '驾意险', '整体']
     xu_hao = ''
 
     ming_cheng = ['分公司整体']
@@ -50,8 +57,8 @@ def zhong_zhi_write(ws):
             row = [xu_hao,
                    tong_ji.jian_cheng,
                    tong_ji.xian_zhong,
-                   tong_ji.lei_ji_bao_fei,
-                   tong_ji.yi_nian_lei_ji_bao_fei,
+                   tong_ji.nian_bao_fei,
+                   tong_ji.yi_nian_bao_fei,
                    tong_ji.yi_nian_tong_bi]
 
             ws.append(row)
@@ -78,16 +85,16 @@ def zhong_zhi_write(ws):
                    end_column=ws.max_column)
 
     # 合并 序号列和机构名称列
-    for i in range(4, ws.max_row, 4):
+    for i in range(4, ws.max_row, 5):
         # 合并 序号列
         ws.merge_cells(start_row=i,
                        start_column=1,
-                       end_row=i+3,
+                       end_row=i+4,
                        end_column=1)
         # 合并 机构名称列
         ws.merge_cells(start_row=i,
                        start_column=2,
-                       end_row=i+3,
+                       end_row=i+4,
                        end_column=2)
 
     logging.debug('单元格合并完成')
@@ -104,7 +111,7 @@ def zhong_zhi_write(ws):
                 r.style = 'shuo_ming'
             elif nrow == 3:
                 r.style = 'xiao_biao_ti'
-            elif nrow % 4 == 3:     # 但行号除以 4余 3时则为整体保费行，加粗处理
+            elif nrow % 5 == 3:     # 但行号除以 5余 3时则为整体保费行，加粗处理
                 if fill is True:
                     if col <= 3:
                         r.style = 'wen_zi_cu_hui'
@@ -138,8 +145,9 @@ def zhong_zhi_write(ws):
             col += 1
         nrow += 1
 
-        # 每隔 4行改变一次是否有背景色
-        if nrow % 4 == 0:
+        # 每隔 5行改变一次是否有背景色
+        if nrow > 5 \
+          and nrow % 5 == 4:
             if fill is True:
                 fill = False
             else:

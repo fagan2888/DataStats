@@ -13,32 +13,36 @@ class Tong_ji(object):
         self._cur = self._conn.cursor()
 
     @property
-    def jin_tian(self):
+    def wan_zheng_ri_qi(self):
         '''
-        返回今天日期
+        返回数据表中最大日期
         '''
-        return datetime.today().strftime('%Y-%m-%d')
+        str_sql = "SELECT MAX([投保确认日期]) \
+                   FROM   [2020年]"
+        self._cur.execute(str_sql)
+        value = self._cur.fetchone()
+        return value[0]
 
     @property
-    def jin_nian(self):
+    def nian(self):
         '''
-        返回今天年份
+        返回数据表中的年份
         '''
-        return self.jin_tian[:4]
+        return self.wan_zheng_ri_qi[:4]
 
     @property
-    def jin_yue(self):
+    def yue(self):
         '''
-        返回今天月份
+        返回数据表中最大的月份
         '''
-        return self.jin_tian[5:7]
+        return self.wan_zheng_ri_qi[5:7]
 
     @property
-    def jin_ri(self):
+    def ri(self):
         '''
-        返回今天日数
+        返回数据表中最大日数
         '''
-        return self.jin_tian[8:10]
+        return self.wan_zheng_ri_qi[8:10]
 
     @property
     def jian_cheng(self):
@@ -55,76 +59,115 @@ class Tong_ji(object):
         return self._xian_zhong
 
     @property
-    def lei_ji_bao_fei(self):
+    def nian_bao_fei(self):
         '''
         返回年底累计保费
         '''
         if self.jian_cheng == '分公司整体':
             if self.xian_zhong == '整体':
+                # 查询分公司整体保费数据
                 str_sql = f"SELECT SUM ([签单保费/批改保费]) \
-                        FROM [{self.jin_nian}年] \
-                        WHERE [投保确认日期] < '{self.jin_tian}'"
+                        FROM [{self.nian}年] \
+                        WHERE [投保确认日期] <= '{self.wan_zheng_ri_qi}'"
             elif self.xian_zhong == '车险':
+                # 查询分公司车险保费数据
                 str_sql = f"SELECT SUM ([签单保费/批改保费]) \
-                        FROM [{self.jin_nian}年] \
+                        FROM [{self.nian}年] \
                         WHERE [车险/财产险/人身险] = '{self.xian_zhong}' \
-                        AND [投保确认日期] < '{self.jin_tian}'"
+                        AND [投保确认日期] <= '{self.wan_zheng_ri_qi}'"
             elif self.xian_zhong == '非车险':
+                # 查询分公司非车险保费数据
                 str_sql = f"SELECT SUM ([签单保费/批改保费]) \
-                        FROM [{self.jin_nian}年] \
+                        FROM [{self.nian}年] \
                         WHERE ([车险/财产险/人身险] = '人身险' \
                         OR [车险/财产险/人身险] = '财产险') \
-                        AND [投保确认日期] < '{self.jin_tian}'"
+                        AND [投保确认日期] <= '{self.wan_zheng_ri_qi}'"
+            else:
+                # 查询分公司分险保费数据
+                str_sql = f"SELECT SUM ([签单保费/批改保费]) \
+                        FROM [{self.nian}年] \
+                        JOIN [险种名称] \
+                        ON [{self.nian}年].[险种名称] = [险种名称].[险种名称] \
+                        WHERE  [险种名称].[险种简称] = '{self.xian_zhong}' \
+                        AND [投保确认日期] <= '{self.wan_zheng_ri_qi}'"
         elif '本部' in self.jian_cheng:
             if self.xian_zhong == '整体':
+                # 查询中支公司整体保费数据
                 str_sql = f"SELECT SUM ([签单保费/批改保费]) \
-                        FROM [{self.jin_nian}年] \
+                        FROM [{self.nian}年] \
                         JOIN [机构] \
-                        ON [{self.jin_nian}年].[机构] = [机构].[机构] \
+                        ON [{self.nian}年].[机构] = [机构].[机构] \
                         WHERE [机构].[机构简称] = '{self.jian_cheng}' \
-                        AND [投保确认日期] < '{self.jin_tian}'"
+                        AND [投保确认日期] <= '{self.wan_zheng_ri_qi}'"
             elif self.xian_zhong == '车险':
+                # 查询中支公司车险保费数据
                 str_sql = f"SELECT SUM ([签单保费/批改保费]) \
-                        FROM [{self.jin_nian}年] \
+                        FROM [{self.nian}年] \
                         JOIN [机构] \
-                        ON [{self.jin_nian}年].[机构] = [机构].[机构] \
+                        ON [{self.nian}年].[机构] = [机构].[机构] \
                         WHERE [车险/财产险/人身险] = '{self.xian_zhong}' \
                         AND [机构].[机构简称] = '{self.jian_cheng}' \
-                        AND [投保确认日期] < '{self.jin_tian}'"
+                        AND [投保确认日期] <= '{self.wan_zheng_ri_qi}'"
             elif self.xian_zhong == '非车险':
+                # 查询中支公司非车险保费数据
                 str_sql = f"SELECT SUM ([签单保费/批改保费]) \
-                        FROM [{self.jin_nian}年] \
+                        FROM [{self.nian}年] \
                         JOIN [机构] \
-                        ON [{self.jin_nian}年].[机构] = [机构].[机构] \
+                        ON [{self.nian}年].[机构] = [机构].[机构] \
                         WHERE ([车险/财产险/人身险] = '人身险' \
                         OR [车险/财产险/人身险] = '财产险') \
                         AND [机构].[机构简称] = '{self.jian_cheng}' \
-                        AND [投保确认日期] < '{self.jin_tian}'"
+                        AND [投保确认日期] <= '{self.wan_zheng_ri_qi}'"
+            else:
+                # 查询中支公司非车险保费数据
+                str_sql = f"SELECT SUM ([签单保费/批改保费]) \
+                        FROM [{self.nian}年] \
+                        JOIN [机构] \
+                        ON [{self.nian}年].[机构] = [机构].[机构] \
+                        JOIN [险种名称] \
+                        ON [{self.nian}年].[险种名称] = [险种名称].[险种名称] \
+                        WHERE  [险种名称].[险种简称] = '{self.xian_zhong}' \
+                        AND [机构].[机构简称] = '{self.jian_cheng}' \
+                        AND [投保确认日期] <= '{self.wan_zheng_ri_qi}'"
         elif '销售' in self.jian_cheng:
             if self.xian_zhong == '整体':
+                # 查询内部团队整体保费数据
                 str_sql = f"SELECT SUM ([签单保费/批改保费]) \
-                        FROM [{self.jin_nian}年] \
+                        FROM [{self.nian}年] \
                         JOIN [销售团队] \
-                        ON [{self.jin_nian}年].[销售团队] = [销售团队].[销售团队] \
+                        ON [{self.nian}年].[销售团队] = [销售团队].[销售团队] \
                         WHERE [销售团队].[销售团队简称] = '{self.jian_cheng}' \
-                        AND [投保确认日期] < '{self.jin_tian}'"
+                        AND [投保确认日期] <= '{self.wan_zheng_ri_qi}'"
             elif self.xian_zhong == '车险':
+                # 查询内部团队车险保费数据
                 str_sql = f"SELECT SUM ([签单保费/批改保费]) \
-                        FROM [{self.jin_nian}年] \
+                        FROM [{self.nian}年] \
                         JOIN [销售团队] \
-                        ON [{self.jin_nian}年].[销售团队] = [销售团队].[销售团队] \
+                        ON [{self.nian}年].[销售团队] = [销售团队].[销售团队] \
                         WHERE [车险/财产险/人身险] = '{self.xian_zhong}' \
                         AND [销售团队].[销售团队简称] = '{self.jian_cheng}' \
-                        AND [投保确认日期] < '{self.jin_tian}'"
+                        AND [投保确认日期] <= '{self.wan_zheng_ri_qi}'"
             elif self.xian_zhong == '非车险':
+                # 查询内部团队非车险保费数据
                 str_sql = f"SELECT SUM ([签单保费/批改保费]) \
-                        FROM [{self.jin_nian}年] \
+                        FROM [{self.nian}年] \
                         JOIN [销售团队] \
-                        ON [{self.jin_nian}年].[销售团队] = [销售团队].[销售团队] \
+                        ON [{self.nian}年].[销售团队] = [销售团队].[销售团队] \
                         WHERE ([车险/财产险/人身险] = '人身险' \
                         OR [车险/财产险/人身险] = '财产险') \
                         AND [销售团队].[销售团队简称] = '{self.jian_cheng}' \
-                        AND [投保确认日期] < '{self.jin_tian}'"
+                        AND [投保确认日期] <= '{self.wan_zheng_ri_qi}'"
+            else:
+                # 查询内部团队分险种保费数据
+                str_sql = f"SELECT SUM ([签单保费/批改保费]) \
+                        FROM [{self.nian}年] \
+                        JOIN [销售团队] \
+                        ON [{self.nian}年].[销售团队] = [销售团队].[销售团队] \
+                        JOIN [险种名称] \
+                        ON [{self.nian}年].[险种名称] = [险种名称].[险种名称] \
+                        WHERE  [险种名称].[险种简称] = '{self.xian_zhong}' \
+                        AND [销售团队].[销售团队简称] = '{self.jian_cheng}' \
+                        AND [投保确认日期] <= '{self.wan_zheng_ri_qi}'"
 
         self._cur.execute(str_sql)
         for value in self._cur.fetchone():
@@ -134,46 +177,60 @@ class Tong_ji(object):
                 return float(value) / 10000
 
     @property
-    def yi_nian_lei_ji_bao_fei(self):
+    def yi_nian_bao_fei(self):
         '''
         返回1年同期累计保费
         '''
-        year = int(self.jin_nian) - 1
-        date = f'{year}-{self.jin_yue}-{self.jin_ri}'
+        year = int(self.nian) - 1
+        date = f'{year}-{self.yue}-{self.ri}'
 
         if self.jian_cheng == '分公司整体':
             if self.xian_zhong == '整体':
+                # 查询分公司整体保费数据
                 str_sql = f"SELECT SUM([签单保费/批改保费]) \
                         FROM [{year}年] \
-                        WHERE [投保确认日期] < '{date}'"
+                        WHERE [投保确认日期] <= '{date}'"
             elif self.xian_zhong == '车险':
+                # 查询分公司车险保费数据
                 str_sql = f"SELECT SUM([签单保费/批改保费]) \
                         FROM [{year}年] \
                         WHERE [车险/财产险/人身险] = '{self.xian_zhong}' \
-                        AND [投保确认日期] < '{date}'"
+                        AND [投保确认日期] <= '{date}'"
             elif self.xian_zhong == '非车险':
+                # 查询分公司非车险保费数据
                 str_sql = f"SELECT SUM([签单保费/批改保费]) \
                         FROM [{year}年] \
                         WHERE ([车险/财产险/人身险] = '人身险' \
                         OR [车险/财产险/人身险] = '财产险') \
-                        AND [投保确认日期] < '{date}'"
+                        AND [投保确认日期] <= '{date}'"
+            else:
+                # 查询分公司非车险保费数据
+                str_sql = f"SELECT SUM([签单保费/批改保费]) \
+                        FROM [{year}年] \
+                        JOIN [险种名称] \
+                        ON [{year}年].[险种名称] = [险种名称].[险种名称] \
+                        WHERE  [险种名称].[险种简称] = '{self.xian_zhong}' \
+                        AND [投保确认日期] <= '{date}'"
         elif '本部' in self.jian_cheng:
             if self.xian_zhong == '整体':
+                # 查询中支本部整体保费数据
                 str_sql = f"SELECT SUM([签单保费/批改保费]) \
                         FROM [{year}年] \
                         JOIN [机构] \
                         ON [{year}年].[机构] = [机构].[机构] \
                         WHERE [机构].[机构简称] = '{self.jian_cheng}' \
-                        AND [投保确认日期] < '{date}'"
+                        AND [投保确认日期] <= '{date}'"
             elif self.xian_zhong == '车险':
+                # 查询中支本部车险保费数据
                 str_sql = f"SELECT SUM([签单保费/批改保费]) \
                         FROM [{year}年] \
                         JOIN [机构] \
                         ON [{year}年].[机构] = [机构].[机构] \
                         WHERE  [车险/财产险/人身险] = '{self.xian_zhong}' \
                         AND [机构].[机构简称] = '{self.jian_cheng}' \
-                        AND [投保确认日期] < '{date}'"
+                        AND [投保确认日期] <= '{date}'"
             elif self.xian_zhong == '非车险':
+                # 查询中支本部非车险保费数据
                 str_sql = f"SELECT SUM([签单保费/批改保费]) \
                         FROM [{year}年] \
                         JOIN [机构] \
@@ -181,24 +238,38 @@ class Tong_ji(object):
                         WHERE ([车险/财产险/人身险] = '人身险' \
                         OR [车险/财产险/人身险] = '财产险') \
                         AND [机构].[机构简称] = '{self.jian_cheng}' \
-                        AND [投保确认日期] < '{date}'"
+                        AND [投保确认日期] <= '{date}'"
+            else:
+                # 查询中支本部分险种保费数据
+                str_sql = f"SELECT SUM([签单保费/批改保费]) \
+                        FROM [{year}年] \
+                        JOIN [机构] \
+                        ON [{year}年].[机构] = [机构].[机构] \
+                        JOIN [险种名称] \
+                        ON [{year}年].[险种名称] = [险种名称].[险种名称] \
+                        WHERE  [险种名称].[险种简称] = '{self.xian_zhong}' \
+                        AND [机构].[机构简称] = '{self.jian_cheng}' \
+                        AND [投保确认日期] <= '{date}'"
         elif '销售' in self.jian_cheng:
             if self.xian_zhong == '整体':
+                # 查询内部团队整体保费数据
                 str_sql = f"SELECT SUM([签单保费/批改保费]) \
                         FROM [{year}年] \
                         JOIN [销售团队] \
                         ON [{year}年].[销售团队] = [销售团队].[销售团队] \
                         WHERE [销售团队].[销售团队简称] = '{self.jian_cheng}' \
-                        AND [投保确认日期] < '{date}'"
+                        AND [投保确认日期] <= '{date}'"
             elif self.xian_zhong == '车险':
+                # 查询内部团队车险保费数据
                 str_sql = f"SELECT SUM([签单保费/批改保费]) \
                         FROM [{year}年] \
                         JOIN [销售团队] \
                         ON [{year}年].[销售团队] = [销售团队].[销售团队] \
                         WHERE  [车险/财产险/人身险] = '{self.xian_zhong}' \
                         AND [销售团队].[销售团队简称] = '{self.jian_cheng}' \
-                        AND [投保确认日期] < '{date}'"
+                        AND [投保确认日期] <= '{date}'"
             elif self.xian_zhong == '非车险':
+                # 查询内部团队非车险保费数据
                 str_sql = f"SELECT SUM([签单保费/批改保费]) \
                         FROM [{year}年] \
                         JOIN [销售团队] \
@@ -206,7 +277,18 @@ class Tong_ji(object):
                         WHERE ([车险/财产险/人身险] = '人身险' \
                         OR [车险/财产险/人身险] = '财产险') \
                         AND [销售团队].[销售团队简称] = '{self.jian_cheng}' \
-                        AND [投保确认日期] < '{date}'"
+                        AND [投保确认日期] <= '{date}'"
+            else:
+                # 查询内部团队非车险保费数据
+                str_sql = f"SELECT SUM([签单保费/批改保费]) \
+                        FROM [{year}年] \
+                        JOIN [销售团队] \
+                        ON [{year}年].[销售团队] = [销售团队].[销售团队] \
+                        JOIN [险种名称] \
+                        ON [{year}年].[险种名称] = [险种名称].[险种名称] \
+                        WHERE  [险种名称].[险种简称] = '{self.xian_zhong}' \
+                        AND [销售团队].[销售团队简称] = '{self.jian_cheng}' \
+                        AND [投保确认日期] <= '{date}'"
 
         self._cur.execute(str_sql)
         for value in self._cur.fetchone():
@@ -217,14 +299,14 @@ class Tong_ji(object):
 
     @property
     def yi_nian_tong_bi(self):
-        if self.yi_nian_lei_ji_bao_fei == 0:
-            return 1
+        if self.yi_nian_bao_fei == 0:
+            return '——'
         else:
-            return self.lei_ji_bao_fei / self.yi_nian_lei_ji_bao_fei - 1
+            return self.nian_bao_fei / self.yi_nian_bao_fei - 1
 
 
 if __name__ == '__main__':
     ji_gou = Tong_ji('曲靖中支销售一部', '车险')
     print(ji_gou.jian_cheng,
-          ji_gou.lei_ji_bao_fei,
+          ji_gou.nian_bao_fei,
           ji_gou.yi_nian_lei_ji_bao_fei)

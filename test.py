@@ -13,7 +13,7 @@ def update():
     logging.debug('数据库连接成功')
     cur = conn.cursor()
 
-    table = '销售团队'
+    table = '险种名称信息对照表'
 
     # 清空原数据库数据
     str_sql = f"DELETE FROM [{table}]"
@@ -22,7 +22,7 @@ def update():
     logging.debug("数据库数据清空完毕")
 
     # 读入Excel表格数据
-    wb = load_workbook(r'Back\销售团队信息对照表.xlsx')
+    wb = load_workbook(f'Back\\{table}.xlsx')
     ws = wb['2020']
 
     logging.debug("Excel 文件读入成功")
