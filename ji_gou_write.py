@@ -27,7 +27,8 @@ def ji_gou_write(ws):
     ws.append(row)
     logging.debug('说明行插入完成')
 
-    row = ['序号', '机构', '险种', '累计保费', '同期保费', '同比增长率']
+    row = ['序号', '机构', '险种', '计划任务', '累计保费',
+           '时间进度\n达成率', '同比增长率']
     ws.append(row)
     logging.debug('列标题行插入完成')
 
@@ -60,8 +61,9 @@ def ji_gou_write(ws):
             row = [xu_hao,
                    tong_ji.jian_cheng,
                    tong_ji.xian_zhong,
+                   tong_ji.ren_wu,
                    tong_ji.nian_bao_fei,
-                   tong_ji.yi_nian_bao_fei,
+                   tong_ji.shi_jian_da_cheng_lv,
                    tong_ji.yi_nian_tong_bi]
 
             ws.append(row)
@@ -116,33 +118,33 @@ def ji_gou_write(ws):
                 r.style = 'xiao_biao_ti'
             elif nrow % 4 == 3:     # 但行号除以 4余 3时则为整体保费行，加粗处理
                 if fill is True:
-                    if col <= 3:
+                    if col <= 4:
                         r.style = 'wen_zi_cu_hui'
                     elif col <= 5:
                         r.style = 'shu_zi_cu_hui'
-                    elif col == 6:
+                    elif col <= 7:
                         r.style = 'bai_fen_bi_cu_hui'
                 else:
-                    if col <= 3:
+                    if col <= 4:
                         r.style = 'wen_zi_cu'
                     elif col <= 5:
                         r.style = 'shu_zi_cu'
-                    elif col == 6:
+                    elif col <= 7:
                         r.style = 'bai_fen_bi_cu'
             else:
                 if fill is True:
-                    if col <= 3:
+                    if col <= 4:
                         r.style = 'wen_zi_hui'
                     elif col <= 5:
                         r.style = 'shu_zi_hui'
-                    elif col == 6:
+                    elif col <= 7:
                         r.style = 'bai_fen_bi_hui'
                 else:
-                    if col <= 3:
+                    if col <= 4:
                         r.style = 'wen_zi'
                     elif col <= 5:
                         r.style = 'shu_zi'
-                    elif col == 6:
+                    elif col <= 7:
                         r.style = 'bai_fen_bi'
 
             col += 1
@@ -164,7 +166,8 @@ def ji_gou_write(ws):
     ws.column_dimensions['C'].width = 9
     ws.column_dimensions['D'].width = 10
     ws.column_dimensions['E'].width = 10
-    ws.column_dimensions['F'].width = 12
+    ws.column_dimensions['F'].width = 10
+    ws.column_dimensions['G'].width = 12
 
     logging.debug('列宽调整完成')
     logging.debug('四级机构数据统计表写入完成')

@@ -1,5 +1,7 @@
 import sqlite3
 from datetime import datetime
+from datetime import date
+import calendar
 
 
 class Tong_ji(object):
@@ -57,6 +59,23 @@ class Tong_ji(object):
         返回险种
         '''
         return self._xian_zhong
+
+    @property
+    def ren_wu(self):
+        '''
+        返回计划任务
+        '''
+        sql_str = f"SELECT [{self.xian_zhong}任务] \
+                FROM [计划任务] \
+                WHERE [机构] = '{self.jian_cheng}'"
+        self._cur.execute(sql_str)
+
+        for value in self._cur.fetchone():
+            if (value is None
+               or value == 0):
+                return '——'
+            else:
+                return int(value)
 
     @property
     def nian_bao_fei(self):
@@ -225,6 +244,30 @@ class Tong_ji(object):
             return '——'
         else:
             return self.nian_bao_fei / self.yi_nian_bao_fei - 1
+
+    @property
+    def ren_wu_da_cheng_lv(self):
+        if self.ren_wu == '——':
+            return '——'
+        else:
+            return self.nian_bao_fei / self.ren_wu
+
+    @property
+    def shi_jian_jin_du(self):
+        if calendar.isleap(int(self.nian)):
+            zong_tian_shu = 366
+        else:
+            zong_tian_shu = 365
+        tian_shu = date(int(self.nian), int(self.yue),
+                        int(self.ri)).strftime('%j')
+        return int(tian_shu) / zong_tian_shu
+
+    @property
+    def shi_jian_da_cheng_lv(self):
+        if self.ren_wu_da_cheng_lv == '——':
+            return '——'
+        else:
+            return self.ren_wu_da_cheng_lv / self.shi_jian_jin_du
 
 
 if __name__ == '__main__':

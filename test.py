@@ -13,7 +13,7 @@ def update():
     logging.debug('数据库连接成功')
     cur = conn.cursor()
 
-    table = '险种名称信息对照表'
+    table = '计划任务'
 
     # 清空原数据库数据
     str_sql = f"DELETE FROM [{table}]"

@@ -16,22 +16,22 @@ logging.disable(logging.NOTSET)
 logging.basicConfig(level=logging.DEBUG,
                     format=' %(asctime)s | %(levelname)s | %(message)s')
 
-# 调用数据库更新函数
-update()
+# # 调用数据库更新函数
+# update()
 
 wb = Workbook()
 
 # 调用样式函数初始化数字样式
 style(wb)
 
-# 写入三级机构中心支公司数据表
-ws = wb.active
-ws.title = '三级机构数据统计表'
-zhong_zhi_write(ws)
+# # 写入三级机构中心支公司数据表
+# ws = wb.active
+# ws.title = '三级机构数据统计表'
+# zhong_zhi_write(ws)
 
-# 写入四级机构数据表
-ws = wb.create_sheet(title='四级机构数据统计表')
-ji_gou_write(ws)
+# # 写入四级机构数据表
+# ws = wb.create_sheet(title='四级机构数据统计表')
+# ji_gou_write(ws)
 
 # 写入内部团队数据表
 ws = wb.create_sheet(title='内部团队数据统计表')
