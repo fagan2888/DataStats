@@ -1,6 +1,5 @@
 import logging
 import xlsxwriter
-import sqlite3
 from ji_gou_tong_ji import Tong_ji
 
 logging.disable(logging.NOTSET)
@@ -38,7 +37,6 @@ style_bi.set_font_size(11)
 style_bi.set_valign('center')
 style_bi.set_num_format('0.00%')
 style_bi.set_border(1)
-
 
 ji_gou = ['百大国际',
           '春怡雅苑',
@@ -94,6 +92,5 @@ ws.set_column('F:F', 10)
 ws.set_column('G:G', 10)
 ws.set_column('H:H', 10)
 ws.set_column('I:I', 10)
-
 
 wb.close()
