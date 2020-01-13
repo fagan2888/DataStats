@@ -64,3 +64,7 @@ def update():
     cur.close()
     conn.close()
     print("-" * 60)
+
+
+if __name__ == '__main__':
+    update()

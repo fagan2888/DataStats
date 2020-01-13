@@ -8,9 +8,11 @@ class Tong_ji(object):
     """
     以一个机构为实例，返回计算报表相关数据
     """
-    def __init__(self, name, risk):
+    def __init__(self, name, risk, risk_leve, name_leve):
         self._jian_cheng = name  # 机构简称
         self._xian_zhong = risk  # 险种
+        self._xian_zhong_ji_bie = risk_leve  # 险种类型
+        self._ji_gou_ji_bie = name_leve  # 机构类型
         self._nian = None
         self._yue = None
         self._ri = None
@@ -102,6 +104,20 @@ class Tong_ji(object):
         返回险种
         '''
         return self._xian_zhong
+
+    @property
+    def xian_zhong_ji_bie(self):
+        '''
+        返回险种级别
+        '''
+        return self._xian_zhong_ji_bie
+
+    @property
+    def ji_gou_ji_bie(self):
+        '''
+        返回机构级别
+        '''
+        return self._ji_gou_ji_bie
 
     @property
     def ren_wu(self):
@@ -313,7 +329,7 @@ class Tong_ji(object):
                     AND [日期].[日数] <= '{self.ri}' \
                     AND [车险/财产险/人身险] = '{self.xian_zhong}' \
                     AND [机构].[机构简称] = '{self.jian_cheng}'"
-        
+
         self._cur.execute(str_sql)
         for value in self._cur.fetchone():
             if value is None:
@@ -353,7 +369,7 @@ class Tong_ji(object):
                     AND [日期].[日数] <= '{self.ri}' \
                     AND [车险/财产险/人身险] = '{self.xian_zhong}' \
                     AND [机构].[机构简称] = '{self.jian_cheng}'"
-        
+
         self._cur.execute(str_sql)
         for value in self._cur.fetchone():
             if value is None:
