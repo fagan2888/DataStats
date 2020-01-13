@@ -1,5 +1,4 @@
 import sqlite3
-from datetime import datetime
 from datetime import date
 import calendar
 
@@ -8,11 +7,9 @@ class Tong_ji(object):
     """
     以一个机构为实例，返回计算报表相关数据
     """
-    def __init__(self, name, risk, risk_leve, name_leve):
+    def __init__(self, name, risk):
         self._jian_cheng = name  # 机构简称
         self._xian_zhong = risk  # 险种
-        self._xian_zhong_ji_bie = risk_leve  # 险种类型
-        self._ji_gou_ji_bie = name_leve  # 机构类型
         self._nian = None
         self._yue = None
         self._ri = None
@@ -503,7 +500,7 @@ class Tong_ji(object):
         '''
         if self.zhou == 1:
             nian = self.nian - 1
-            yue = 52
+            zhou = 52
         else:
             nian = self.nian
             zhou = self.zhou - 1
