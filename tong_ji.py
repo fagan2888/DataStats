@@ -1,7 +1,9 @@
 import sqlite3
+from datetime import date
+import calendar
 
 
-class Tong_ji(object):
+class Tong_Ji(object):
     '''
     数据统计的基类
     '''
@@ -115,7 +117,7 @@ class Tong_ji(object):
     @property
     def ji_gou_ji_bie(self):
         '''
-        返回险种类型
+        返回机构类型
         '''
         return self._ji_gou_ji_bie
 
@@ -135,6 +137,39 @@ class Tong_ji(object):
                 return '——'
             else:
                 return int(value)
+
+    @property
+    def shi_jian_jin_du(self):
+        '''
+        返回当前时间的时间进度
+        '''
+        if calendar.isleap(int(self.nian)):
+            zong_tian_shu = 366
+        else:
+            zong_tian_shu = 365
+        tian_shu = date(self.nian, self.yue,
+                        self.ri).strftime('%j')
+        return int(tian_shu) / zong_tian_shu
+
+    @property
+    def ren_wu_jin_du(self):
+        '''
+        返回年度保费的计划任务达成率
+        '''
+        if self.ren_wu is None or self.ren_wu == 0:
+            return "——"
+        else:
+            return self.nian_bao_fei / self.ren_wu
+
+    @property
+    def shi_jian_da_cheng(self):
+        '''
+        返回当前累计保费的时间进度达成率
+        '''
+        if self.ren_wu_jin_du == '——':
+            return '——'
+        else:
+            return self.ren_wu_jin_du / self.shi_jian_jin_du
 
     def ji_gou_join(self, n):
         '''
@@ -198,8 +233,10 @@ class Tong_ji(object):
         if self.xian_zhong_ji_bie == '整体':
             str_sql = ''
         elif self.xian_zhong_ji_bie == '险种':
-            str_sql = f"AND [{nian}年].[车险/财产险/人身险] = \
-                       '{self.xian_zhong}'"
+            if self.xian_zhong == '非车险':
+                str_sql = f"AND [{nian}年].[车险/财产险/人身险] != '车险'"
+            else:
+                str_sql = f"AND [{nian}年].[车险/财产险/人身险] = '{self.xian_zhong}'"
 
         elif self.xian_zhong_ji_bie == '险种大类':
             str_sql = f"AND [{nian}年].[险种大类] = '{self.xian_zhong}'"
@@ -253,6 +290,30 @@ class Tong_ji(object):
                 return 0
             else:
                 return float(value) / 10000
+
+    @property
+    def yue_bao_fei(self):
+        '''
+        返回月度累计保费
+        '''
+
+        str_sql = f"SELECT SUM([签单保费/批改保费]) \
+            FROM [{self.nian}年] \
+            {self.ji_gou_join(0)} \
+            {self.xian_zhong_join(0)} \
+            JOIN [日期] \
+            ON [{self.nian}年].[投保确认日期] = [日期].[投保确认日期] \
+            WHERE [日期].[月份] <= '{self.yue}' \
+            {self.ji_gou_where()} \
+            {self.xian_zhong_where(0)}"
+
+        self._cur.execute(str_sql)
+        for value in self._cur.fetchone():
+            if value is None:
+                return 0
+            else:
+                return float(value) / 10000
+
 
 
 if __name__ == '__main__':

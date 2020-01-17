@@ -146,7 +146,7 @@ class Tong_ji(object):
                 str_sql = f"SELECT SUM ([签单保费/批改保费]) \
                         FROM [{self.nian}年] \
                         WHERE [投保确认日期] <= '{ri_qi}'"
-            elif self.xian_zhong != '非车险':
+            elif self.xian_zhong in ['车险', '财产险', '人身险']:
                 # 查询分公司车险保费数据
                 str_sql = f"SELECT SUM ([签单保费/批改保费]) \
                         FROM [{self.nian}年] \
@@ -176,7 +176,7 @@ class Tong_ji(object):
                         ON [{self.nian}年].[机构] = [机构].[机构] \
                         WHERE [机构].[机构简称] = '{self.jian_cheng}' \
                         AND [投保确认日期] <= '{ri_qi}'"
-            elif self.xian_zhong != '非车险':
+            elif self.xian_zhong in ['车险', '财产险', '人身险']:
                 # 查询机构车险保费数据
                 str_sql = f"SELECT SUM ([签单保费/批改保费]) \
                         FROM [{self.nian}年] \
@@ -228,7 +228,7 @@ class Tong_ji(object):
                 str_sql = f"SELECT SUM([签单保费/批改保费]) \
                         FROM [{nian}年] \
                         WHERE [投保确认日期] <= '{ri_qi}'"
-            elif self.xian_zhong != '非车险':
+            elif self.xian_zhong in ['车险', '财产险', '人身险']:
                 # 查询分公司车险保费数据
                 str_sql = f"SELECT SUM([签单保费/批改保费]) \
                         FROM [{nian}年] \
@@ -258,7 +258,7 @@ class Tong_ji(object):
                         ON [{nian}年].[机构] = [机构].[机构] \
                         WHERE [机构].[机构简称] = '{self.jian_cheng}' \
                         AND [投保确认日期] <= '{ri_qi}'"
-            elif self.xian_zhong != '非车险':
+            elif self.xian_zhong in ['车险', '财产险', '人身险']:
                 # 查询机构车险保费数据
                 str_sql = f"SELECT SUM([签单保费/批改保费]) \
                         FROM [{nian}年] \
@@ -528,7 +528,7 @@ class Tong_ji(object):
                     AND [日期].[周数] <= '{zhou}' \
                     AND [车险/财产险/人身险] = '{self.xian_zhong}' \
                     AND [机构].[机构简称] = '{self.jian_cheng}'"
-        
+
         self._cur.execute(str_sql)
         for value in self._cur.fetchone():
             if value is None:
@@ -542,14 +542,14 @@ class Tong_ji(object):
             return '——'
         else:
             return self.nian_bao_fei / self.yi_nian_bao_fei - 1
-    
+
     @property
     def yue_tong_bi(self):
         if self.tong_yue_bao_fei == 0:
             return '——'
         else:
             return self.yue_bao_fei / self.tong_yue_bao_fei - 1
-    
+
     @property
     def zhou_tong_bi(self):
         if self.tong_zhou_bao_fei == 0:
@@ -563,7 +563,7 @@ class Tong_ji(object):
             return '——'
         else:
             return self.yue_bao_fei / self.huan_yue_bao_fei - 1
-    
+
     @property
     def zhou_huan_bi(self):
         if self.huan_zhou_bao_fei == 0:
