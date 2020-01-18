@@ -7,7 +7,11 @@ class Tong_Ji(object):
     '''
     数据统计的基类
     '''
-    def __init__(self, name, name_leve, risk, risk_leve):
+    def __init__(self,
+                 name='分公司整体',
+                 name_leve='分公司',
+                 risk='整体',
+                 risk_leve='整体'):
         self._ji_gou = name  # 机构简称
         self._xian_zhong = risk  # 险种
         self._xian_zhong_ji_bie = risk_leve  # 险种类型
@@ -23,6 +27,10 @@ class Tong_Ji(object):
         self._cur = self._conn.cursor()
         self.set_ri_qi()
 
+    @property
+    def cur(self):
+        return self._cur
+
     def set_ri_qi(self):
         '''
         使用当前数据表中最大日期初始化当前日期
@@ -35,8 +43,8 @@ class Tong_Ji(object):
                     (SELECT MAX([投保确认日期]) \
                     FROM [{self.nian}年])"
 
-        self._cur.execute(str_sql)
-        value = self._cur.fetchone()
+        self.cur.execute(str_sql)
+        value = self.cur.fetchone()
         self._yue = value[1]
         self._ri = value[2]
         self._xin_qi = value[3]
@@ -130,9 +138,9 @@ class Tong_Ji(object):
                 FROM [计划任务] \
                 WHERE [机构] = '{self.jian_cheng}'"
 
-        self._cur.execute(sql_str)
+        self.cur.execute(sql_str)
 
-        for value in self._cur.fetchone():
+        for value in self.cur.fetchone():
             if (value is None or value == 0):
                 return '——'
             else:
@@ -179,6 +187,7 @@ class Tong_Ji(object):
 
         if self.ji_gou_ji_bie == '分公司':
             str_sql = ''
+
         elif self.ji_gou_ji_bie == '中心支公司':
             str_sql = f"JOIN [中心支公司] \
                        ON [{nian}年].[中心支公司] = [中心支公司].[中心支公司]"
@@ -262,8 +271,8 @@ class Tong_Ji(object):
             {self.ji_gou_where()} \
             {self.xian_zhong_where(0)}"
 
-        self._cur.execute(str_sql)
-        for value in self._cur.fetchone():
+        self.cur.execute(str_sql)
+        for value in self.cur.fetchone():
             if value is None:
                 return 0
             else:
@@ -284,8 +293,8 @@ class Tong_Ji(object):
             {self.ji_gou_where()} \
             {self.xian_zhong_where(n)}"
 
-        self._cur.execute(str_sql)
-        for value in self._cur.fetchone():
+        self.cur.execute(str_sql)
+        for value in self.cur.fetchone():
             if value is None:
                 return 0
             else:
@@ -303,21 +312,42 @@ class Tong_Ji(object):
             {self.xian_zhong_join(0)} \
             JOIN [日期] \
             ON [{self.nian}年].[投保确认日期] = [日期].[投保确认日期] \
-            WHERE [日期].[月份] <= '{self.yue}' \
+            WHERE [日期].[月份] = '{self.yue}' \
             {self.ji_gou_where()} \
             {self.xian_zhong_where(0)}"
 
-        self._cur.execute(str_sql)
-        for value in self._cur.fetchone():
+        self.cur.execute(str_sql)
+        for value in self.cur.fetchone():
+            if value is None:
+                return 0
+            else:
+                return float(value) / 10000
+
+    def tong_yue_bao_fei(self, year, month, day):
+        '''
+        返回同期月度累计保费
+        '''
+        str_sql = f"SELECT SUM([签单保费/批改保费]) \
+            FROM [{year}年] \
+            {self.ji_gou_join(0)} \
+            {self.xian_zhong_join(0)} \
+            JOIN [日期] \
+            ON [{year}年].[投保确认日期] = [日期].[投保确认日期] \
+            WHERE [日期].[月份] = '{month}' \
+            AND [日期].[日数] <= '{day}' \
+            {self.ji_gou_where()} \
+            {self.xian_zhong_where(0)}"
+
+        self.cur.execute(str_sql)
+        for value in self.cur.fetchone():
             if value is None:
                 return 0
             else:
                 return float(value) / 10000
 
 
-
 if __name__ == '__main__':
-    ji_gou = Tong_ji('曲靖', '中心支公司', '驾意险', '险种名称')
+    ji_gou = Tong_Ji('曲靖', '中心支公司', '驾意险', '险种名称')
     print(ji_gou.nian_bao_fei)
     print(ji_gou.tong_nian_bao_fei(1))
     print(ji_gou.tong_nian_bao_fei(2))

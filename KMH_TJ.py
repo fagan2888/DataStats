@@ -40,6 +40,49 @@ class KMH_TJ(Tong_Ji):
         else:
             return self.ren_wu_jin_du(jie_duan) / self.shi_jian_jin_du
 
+    @property
+    def ze_ren_xian(self):
+        '''
+        返回责任保险的季度保费，不含诉讼保全保险
+        '''
+        ri_qi = f"{self.nian}-{self.yue:02d}-{self.ri:02d}"
+
+        str_sql = f"SELECT SUM ([签单保费/批改保费]) \
+                    FROM [{self.nian}年] \
+                    {self.ji_gou_join(0)} \
+                    WHERE  [{self.nian}年].[险种大类] = '责任保险' \
+                    AND [{self.nian}年].[险种名称] <> '0460诉讼财产保全责任保险' \
+                    {self.ji_gou_where()} \
+                    AND [投保确认日期] <= '{ri_qi}'"
+
+        self.cur.execute(str_sql)
+        for value in self.cur.fetchone():
+            if value is None:
+                return 0
+            else:
+                return float(value) / 10000
+
+    @property
+    def su_ze_xian(self):
+        '''
+        返回诉讼保全保险的季度保费
+        '''
+        ri_qi = f"{self.nian}-{self.yue:02d}-{self.ri:02d}"
+
+        str_sql = f"SELECT SUM ([签单保费/批改保费]) \
+                    FROM [{self.nian}年] \
+                    {self.ji_gou_join(0)} \
+                    WHERE [{self.nian}年].[险种名称] = '0460诉讼财产保全责任保险' \
+                    {self.ji_gou_where()} \
+                    AND [投保确认日期] <= '{ri_qi}'"
+
+        self.cur.execute(str_sql)
+        for value in self.cur.fetchone():
+            if value is None:
+                return 0
+            else:
+                return float(value) / 10000
+
 
 if __name__ == '__main__':
     k = KMH_TJ('曲靖', '中心支公司', '非车险', '险种', '一季度任务')
