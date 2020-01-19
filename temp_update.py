@@ -3,7 +3,7 @@ import logging
 from openpyxl import load_workbook
 
 
-def update():
+def update(tb_name=None, back=True):
     """
     读取从MIS系统导出的Excel表中的内容
     清空数据库中今年的数据
@@ -13,7 +13,15 @@ def update():
     logging.debug('数据库连接成功')
     cur = conn.cursor()
 
-    table = '2020年开门红任务'
+    if tb_name is None:
+        table = '2020年开门红任务'
+    else:
+        table = tb_name
+
+    if back is True:
+        path = f"Back\\{table}.xlsx"
+    else:
+        path = f"{table}.xlsx"
 
     # 清空原数据库数据
     str_sql = f"DELETE FROM [{table}]"
@@ -22,8 +30,8 @@ def update():
     logging.debug("数据库数据清空完毕")
 
     # 读入Excel表格数据
-    wb = load_workbook(f'Back\\{table}.xlsx')
-    ws = wb['2020']
+    wb = load_workbook(path)
+    ws = wb.active
 
     logging.debug("Excel 文件读入成功")
     logging.debug(f"需要导入{ws.max_row}条数据")
@@ -43,7 +51,7 @@ def update():
         cur.execute(str_sql)
 
         nrow += 1
-        if nrow % 100 == 0:
+        if nrow % 300 == 0:
             logging.debug(f'已导入 {nrow} / {ws.max_row} 条数据')
 
     logging.debug('数据写入数据库完成')

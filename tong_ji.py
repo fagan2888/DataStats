@@ -27,6 +27,10 @@ class Tong_Ji(object):
         self._cur = self._conn.cursor()
         self.set_ri_qi()
 
+    def __del__(self):
+        self._cur.close()
+        self._conn.close()
+
     @property
     def cur(self):
         return self._cur
