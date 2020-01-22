@@ -76,6 +76,7 @@ class Style():
         value.set_font_size(self.font_size)
         value.set_align('center')
         value.set_align('vcenter')
+        value.set_text_wrap(True)
         value.set_border(style=1)
         return value
 
@@ -103,6 +104,153 @@ class Style():
         value = self.wb.add_format()
         value.set_font_name('微软雅黑')
         value.set_font_size(self.font_size)
+        value.set_align('center')
+        value.set_align('vcenter')
+        value.set_num_format('0.00%')
+        value.set_border(style=1)
+        return value
+
+    @property
+    def wen_zi_cu(self):
+        '''
+        返回表格中的文字样式
+        微软雅黑，加粗，居中对齐，边框画线
+        '''
+        value = self.wb.add_format()
+        value.set_font_name('微软雅黑')
+        value.set_font_size(self.font_size)
+        value.set_bold(True)
+        value.set_align('center')
+        value.set_align('vcenter')
+        value.set_text_wrap(True)
+        value.set_border(style=1)
+        return value
+
+    @property
+    def shu_zi_cu(self):
+        '''
+        返回表格中的数字样式
+        微软雅黑，加粗，居中对齐，采用0.00格式，边框画线
+        '''
+        value = self.wb.add_format()
+        value.set_font_name('微软雅黑')
+        value.set_font_size(self.font_size)
+        value.set_bold(True)
+        value.set_align('center')
+        value.set_align('vcenter')
+        value.set_num_format('0.00')
+        value.set_border(style=1)
+        return value
+
+    @property
+    def jin_du_cu(self):
+        '''
+        返回表格中的百分比样式
+        微软雅黑，加粗，居中对齐，采用0.00%格式，边框画线
+        '''
+        value = self.wb.add_format()
+        value.set_font_name('微软雅黑')
+        value.set_font_size(self.font_size)
+        value.set_bold(True)
+        value.set_align('center')
+        value.set_align('vcenter')
+        value.set_num_format('0.00%')
+        value.set_border(style=1)
+        return value
+
+    @property
+    def wen_zi_hui(self):
+        '''
+        返回表格中的文字样式
+        微软雅黑，居中对齐，边框画线
+        '''
+        value = self.wb.add_format()
+        value.set_font_name('微软雅黑')
+        value.set_font_size(self.font_size)
+        value.set_bg_color('#cccccc')
+        value.set_align('center')
+        value.set_align('vcenter')
+        value.set_text_wrap(True)
+        value.set_border(style=1)
+        return value
+
+    @property
+    def shu_zi_hui(self):
+        '''
+        返回表格中的数字样式
+        微软雅黑，居中对齐，采用0.00格式，边框画线
+        '''
+        value = self.wb.add_format()
+        value.set_font_name('微软雅黑')
+        value.set_font_size(self.font_size)
+        value.set_bg_color('#cccccc')
+        value.set_align('center')
+        value.set_align('vcenter')
+        value.set_num_format('0.00')
+        value.set_border(style=1)
+        return value
+
+    @property
+    def jin_du_hui(self):
+        '''
+        返回表格中的百分比样式
+        微软雅黑，居中对齐，采用0.00%格式，边框画线
+        '''
+        value = self.wb.add_format()
+        value.set_font_name('微软雅黑')
+        value.set_font_size(self.font_size)
+        value.set_bg_color('#cccccc')
+        value.set_align('center')
+        value.set_align('vcenter')
+        value.set_num_format('0.00%')
+        value.set_border(style=1)
+        return value
+
+    @property
+    def wen_zi_cu_hui(self):
+        '''
+        返回表格中的文字样式
+        微软雅黑，居中对齐，边框画线
+        '''
+        value = self.wb.add_format()
+        value.set_font_name('微软雅黑')
+        value.set_font_size(self.font_size)
+        value.set_bg_color('#cccccc')
+        value.set_bold(True)
+        value.set_align('center')
+        value.set_align('vcenter')
+        value.set_text_wrap(True)
+        value.set_border(style=1)
+        return value
+
+    @property
+    def shu_zi_cu_hui(self):
+        '''
+        返回表格中的数字样式
+        微软雅黑，居中对齐，采用0.00格式，边框画线
+        '''
+        value = self.wb.add_format()
+        value.set_font_name('微软雅黑')
+        value.set_font_size(self.font_size)
+        value.set_bg_color('#cccccc')
+        value.set_bold(True)
+        value.set_align('center')
+        value.set_align('vcenter')
+        value.set_num_format('0.00')
+        value.set_border(style=1)
+        return value
+
+    @property
+    def jin_du_cu_hui(self):
+        '''
+        返回表格中的百分比样式
+        微软雅黑，居中对齐，采用0.00%格式，边框画线
+        '''
+        value = self.wb.add_format()
+        value.set_font_name('微软雅黑')
+        value.set_font_size(self.font_size)
+        value.set_bg_color('#cccccc')
+        value.set_bold(True)
         value.set_align('center')
         value.set_align('vcenter')
         value.set_num_format('0.00%')

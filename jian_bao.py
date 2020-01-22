@@ -1,10 +1,11 @@
-import logging
-from openpyxl import Workbook
+﻿import logging
 
-from zhong_zhi_write import zhong_zhi_write
-from ji_gou_write import ji_gou_write
-from tuan_dui_write import tuan_dui_write
-from style import style
+import xlsxwriter
+
+from code.jian_bao.zhong_zhi import zhong_zhi
+from code.jian_bao.ji_gou import ji_gou
+from code.jian_bao.tuan_dui import tuan_dui
+
 from update import update
 
 
@@ -12,25 +13,18 @@ logging.disable(logging.NOTSET)
 logging.basicConfig(level=logging.DEBUG,
                     format=' %(asctime)s | %(levelname)s | %(message)s')
 
-# 调用数据库更新函数
 update()
+logging.debug('数据库更新完成')
 
-wb = Workbook()
+wb = xlsxwriter.Workbook(r'Report\2020年机构数据统计简报.xlsx')
 
-# 调用样式函数初始化数字样式
-style(wb)
+ws = wb.add_worksheet('三级机构数据统计表')
+zhong_zhi(wb, ws)
 
-# 写入三级机构中心支公司数据表
-ws = wb.active
-ws.title = '三级机构数据统计表'
-zhong_zhi_write(ws)
+ws = wb.add_worksheet('四级机构数据统计表')
+ji_gou(wb, ws)
 
-# 写入四级机构数据表
-ws = wb.create_sheet(title='四级机构数据统计表')
-ji_gou_write(ws)
+ws = wb.add_worksheet('内部团队数据统计表')
+tuan_dui(wb, ws)
 
-# 写入内部团队数据表
-ws = wb.create_sheet(title='内部团队数据统计表')
-tuan_dui_write(ws)
-
-wb.save('2020年机构数据统计表.xlsx')
+wb.close()

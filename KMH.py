@@ -3,7 +3,7 @@ import logging
 
 import xlsxwriter
 
-from KMH_TJ import KMH_TJ
+from code.kai_meng_hong.KMH_TJ import KMH_TJ
 from code.style import Style
 from temp_update import update
 
@@ -56,31 +56,31 @@ def kun_ming_che(sy, ws, ri_qi):
 
     # 使用开门红统计类获取各机构对应的数据，并写入Excel表中
     for ji_gou in ji_gou_list:
-        info = KMH_TJ(ji_gou, '机构', '车险', '险种')
-        ws.write(nrow, ncol, info.ji_gou, sy.wen_zi)
-        ws.write(nrow, ncol + 1, info.ren_wu('一月任务'), sy.wen_zi)
-        ws.write(nrow, ncol + 2, info.ren_wu('二月任务'), sy.wen_zi)
-        ws.write(nrow, ncol + 3, info.ren_wu('三月任务'), sy.wen_zi)
-        ws.write(nrow, ncol + 4, info.ren_wu('一季度任务'), sy.wen_zi)
-        ws.write(nrow, ncol + 5, info.yue_bao_fei, sy.shu_zi)
-        ws.write(nrow, ncol + 6, info.nian_bao_fei, sy.shu_zi)
-        ws.write(nrow, ncol + 7, info.shi_jian_da_cheng('一季度任务'), sy.jin_du)
-        ws.write(nrow, ncol + 8, info.ren_wu_jin_du('一季度任务'), sy.jin_du)
+        data = KMH_TJ(ji_gou, '车险')
+        ws.write(nrow, ncol, data.ming_cheng, sy.wen_zi)
+        ws.write(nrow, ncol + 1, data.ren_wu('一月任务'), sy.wen_zi)
+        ws.write(nrow, ncol + 2, data.ren_wu('二月任务'), sy.wen_zi)
+        ws.write(nrow, ncol + 3, data.ren_wu('三月任务'), sy.wen_zi)
+        ws.write(nrow, ncol + 4, data.ren_wu('一季度任务'), sy.wen_zi)
+        ws.write(nrow, ncol + 5, data.yue_bao_fei(), sy.shu_zi)
+        ws.write(nrow, ncol + 6, data.nian_bao_fei(), sy.shu_zi)
+        ws.write(nrow, ncol + 7, data.shi_jian_da_cheng('一季度任务'), sy.jin_du)
+        ws.write(nrow, ncol + 8, data.ren_wu_jin_du('一季度任务'), sy.jin_du)
 
         nrow += 1
 
     # 写入昆明整体数据
     # 本表为统计四级机构数据，最后的合计行采用三级机构昆明的数据
-    info = KMH_TJ('昆明', '中心支公司', '车险', '险种')
-    ws.write(nrow, ncol, info.ji_gou, sy.wen_zi)
-    ws.write(nrow, ncol + 1, info.ren_wu('一月任务'), sy.wen_zi)
-    ws.write(nrow, ncol + 2, info.ren_wu('二月任务'), sy.wen_zi)
-    ws.write(nrow, ncol + 3, info.ren_wu('三月任务'), sy.wen_zi)
-    ws.write(nrow, ncol + 4, info.ren_wu('一季度任务'), sy.wen_zi)
-    ws.write(nrow, ncol + 5, info.yue_bao_fei, sy.shu_zi)
-    ws.write(nrow, ncol + 6, info.nian_bao_fei, sy.shu_zi)
-    ws.write(nrow, ncol + 7, info.shi_jian_da_cheng('一季度任务'), sy.jin_du)
-    ws.write(nrow, ncol + 8, info.ren_wu_jin_du('一季度任务'), sy.jin_du)
+    data = KMH_TJ('昆明', '车险')
+    ws.write(nrow, ncol, data.ming_cheng, sy.wen_zi)
+    ws.write(nrow, ncol + 1, data.ren_wu('一月任务'), sy.wen_zi)
+    ws.write(nrow, ncol + 2, data.ren_wu('二月任务'), sy.wen_zi)
+    ws.write(nrow, ncol + 3, data.ren_wu('三月任务'), sy.wen_zi)
+    ws.write(nrow, ncol + 4, data.ren_wu('一季度任务'), sy.wen_zi)
+    ws.write(nrow, ncol + 5, data.yue_bao_fei(), sy.shu_zi)
+    ws.write(nrow, ncol + 6, data.nian_bao_fei(), sy.shu_zi)
+    ws.write(nrow, ncol + 7, data.shi_jian_da_cheng('一季度任务'), sy.jin_du)
+    ws.write(nrow, ncol + 8, data.ren_wu_jin_du('一季度任务'), sy.jin_du)
 
     # 设置列宽
     ws.set_column(ncol, ncol, width=10)
@@ -120,7 +120,7 @@ def gui_mo_da_cheng(sy, ws, ri_qi):
 
     # 统计航旅项目的数据
     # 昆明地区数据需要剔除航旅项目的数据，在此先进行获取
-    han_lv = KMH_TJ('航旅项目', '机构', '非车险', '险种')
+    han_lv = KMH_TJ('航旅项目', '非车险')
 
     # A组和B组的机构名称列表
     # 奖项激励分为A组和B组，分别进行排名，分别进行奖励
@@ -132,24 +132,24 @@ def gui_mo_da_cheng(sy, ws, ri_qi):
     B_zu_data = []
 
     for ji_gou in A_zu:
-        data = KMH_TJ(ji_gou, '中心支公司', '非车险', '险种')
-        if data.ji_gou == '昆明':
+        data = KMH_TJ(ji_gou, '非车险')
+        if data.ming_cheng == '昆明':
             # 如果机构为昆明，需要剔除航旅项目的数据
-            A_zu_data.append((data.ji_gou,
+            A_zu_data.append((data.ming_cheng,
                               data.ren_wu('一季度任务'),
-                              data.nian_bao_fei - han_lv.nian_bao_fei,
+                              data.nian_bao_fei() - han_lv.nian_bao_fei(),
                               data.ren_wu_jin_du('一季度任务')))
         else:
-            A_zu_data.append((data.ji_gou,
+            A_zu_data.append((data.ming_cheng,
                               data.ren_wu('一季度任务'),
-                              data.nian_bao_fei,
+                              data.nian_bao_fei(),
                               data.ren_wu_jin_du('一季度任务')))
 
     for ji_gou in B_zu:
-        data = KMH_TJ(ji_gou, '中心支公司', '非车险', '险种')
-        B_zu_data.append((data.ji_gou,
+        data = KMH_TJ(ji_gou, '非车险')
+        B_zu_data.append((data.ming_cheng,
                           data.ren_wu('一季度任务'),
-                          data.nian_bao_fei,
+                          data.nian_bao_fei(),
                           data.ren_wu_jin_du('一季度任务')))
 
     # 以列表中机构的时间进度达成率（第4个值）为依据对进行降序排列，
@@ -176,10 +176,10 @@ def gui_mo_da_cheng(sy, ws, ri_qi):
         ws.write(nrow, ncol + 4, B[3], sy.jin_du)
         nrow += 1
 
-    data = KMH_TJ('分公司整体', '分公司', '非车险', '险种')
-    ws.merge_range(nrow, ncol, nrow, ncol + 1, data.ji_gou, sy.wen_zi)
+    data = KMH_TJ('分公司整体', '非车险')
+    ws.merge_range(nrow, ncol, nrow, ncol + 1, data.ming_cheng, sy.wen_zi)
     ws.write(nrow, ncol + 2, data.ren_wu('一季度任务'), sy.wen_zi)
-    ws.write(nrow, ncol + 3, data.nian_bao_fei, sy.shu_zi)
+    ws.write(nrow, ncol + 3, data.nian_bao_fei(), sy.shu_zi)
     ws.write(nrow, ncol + 4, data.ren_wu_jin_du('一季度任务'), sy.jin_du)
 
     # 合并组别数据列，以便于在视觉上更容易区分两个组别的数据
@@ -224,9 +224,10 @@ def ze_ren_xian(sy, ws, ri_qi):
     data = []
 
     for ji_gou in ji_gou_list:
-        info = KMH_TJ(ji_gou, '中心支公司', '非车险', '险种')
-        data.append((info.ji_gou,
-                     info.ze_ren_xian))
+        temp = KMH_TJ(ji_gou, '非车险')
+        data.append((temp.ming_cheng,
+                     temp.ze_ren_xian))
+
     data_sort = sorted(data, key=lambda k: k[1], reverse=True)
 
     for d in data_sort:
@@ -235,10 +236,10 @@ def ze_ren_xian(sy, ws, ri_qi):
         ws.write(nrow, ncol + 2, d[1], sy.shu_zi)
         nrow += 1
 
-    info = KMH_TJ('分公司整体', '分公司', '非车险', '险种')
+    temp = KMH_TJ('分公司整体', '非车险')
     ws.write(nrow, ncol, '', sy.wen_zi)
-    ws.write(nrow, ncol + 1, info.ji_gou, sy.wen_zi)
-    ws.write(nrow, ncol + 2, info.ze_ren_xian, sy.shu_zi)
+    ws.write(nrow, ncol + 1, temp.ming_cheng, sy.wen_zi)
+    ws.write(nrow, ncol + 2, temp.ze_ren_xian, sy.shu_zi)
 
     ws.set_column(ncol, ncol, width=8)
     ws.set_column(ncol + 1, ncol + 1, width=12)
@@ -279,9 +280,9 @@ def su_ze_xian(sy, ws, ri_qi):
     data = []
 
     for ji_gou in ji_gou_list:
-        info = KMH_TJ(ji_gou, '中心支公司', '非车险', '险种')
-        data.append((info.ji_gou,
-                     info.su_ze_xian))
+        temp = KMH_TJ(ji_gou, '非车险')
+        data.append((temp.ming_cheng,
+                     temp.su_ze_xian))
     data_sort = sorted(data, key=lambda k: k[1], reverse=True)
 
     for d in data_sort:
@@ -290,10 +291,10 @@ def su_ze_xian(sy, ws, ri_qi):
         ws.write(nrow, ncol + 2, d[1], sy.shu_zi)
         nrow += 1
 
-    info = KMH_TJ('分公司整体', '分公司', '非车险', '险种')
+    temp = KMH_TJ('分公司整体', '非车险')
     ws.write(nrow, ncol, '', sy.wen_zi)
-    ws.write(nrow, ncol + 1, info.ji_gou, sy.wen_zi)
-    ws.write(nrow, ncol + 2, info.su_ze_xian, sy.shu_zi)
+    ws.write(nrow, ncol + 1, temp.ming_cheng, sy.wen_zi)
+    ws.write(nrow, ncol + 2, temp.su_ze_xian, sy.shu_zi)
 
     ws.set_column(ncol, ncol, width=8)
     ws.set_column(ncol + 1, ncol + 1, width=12)
@@ -336,13 +337,13 @@ def ji_gou_jia_yi_xian(sy, ws, ri_qi):
     data = []
 
     for ji_gou in ji_gou_list:
-        info = KMH_TJ(ji_gou, '中心支公司', '驾意险', '险种名称')
-        data.append((info.ji_gou,
-                     info.nian_bao_fei,
-                     info.ren_wu('一阶段任务'),
-                     info.shi_jian_da_cheng('一阶段任务'),
-                     info.ren_wu('二阶段任务'),
-                     info.shi_jian_da_cheng('二阶段任务'),))
+        temp = KMH_TJ(ji_gou, '驾意险')
+        data.append((temp.ming_cheng,
+                     temp.nian_bao_fei(),
+                     temp.ren_wu('一阶段任务'),
+                     temp.shi_jian_da_cheng('一阶段任务'),
+                     temp.ren_wu('二阶段任务'),
+                     temp.shi_jian_da_cheng('二阶段任务'),))
     data_sort = sorted(data, key=lambda k: k[5], reverse=True)
 
     for d in data_sort:
@@ -355,14 +356,14 @@ def ji_gou_jia_yi_xian(sy, ws, ri_qi):
         ws.write(nrow, ncol + 6, d[5], sy.jin_du)
         nrow += 1
 
-    info = KMH_TJ('分公司整体', '分公司', '驾意险', '险种名称')
+    temp = KMH_TJ('分公司整体', '驾意险')
     ws.write(nrow, ncol, '', sy.wen_zi)
-    ws.write(nrow, ncol + 1, info.ji_gou, sy.wen_zi)
-    ws.write(nrow, ncol + 2, info.nian_bao_fei, sy.shu_zi)
-    ws.write(nrow, ncol + 3, info.ren_wu('一阶段任务'), sy.wen_zi)
-    ws.write(nrow, ncol + 4, info.shi_jian_da_cheng('一阶段任务'), sy.jin_du)
-    ws.write(nrow, ncol + 5, info.ren_wu('二阶段任务'), sy.wen_zi)
-    ws.write(nrow, ncol + 6, info.shi_jian_da_cheng('二阶段任务'), sy.jin_du)
+    ws.write(nrow, ncol + 1, temp.ming_cheng, sy.wen_zi)
+    ws.write(nrow, ncol + 2, temp.nian_bao_fei(), sy.shu_zi)
+    ws.write(nrow, ncol + 3, temp.ren_wu('一阶段任务'), sy.wen_zi)
+    ws.write(nrow, ncol + 4, temp.shi_jian_da_cheng('一阶段任务'), sy.jin_du)
+    ws.write(nrow, ncol + 5, temp.ren_wu('二阶段任务'), sy.wen_zi)
+    ws.write(nrow, ncol + 6, temp.shi_jian_da_cheng('二阶段任务'), sy.jin_du)
 
     ws.set_column(ncol, ncol, width=6)
     ws.set_column(ncol + 1, ncol + 2, width=12)
@@ -529,7 +530,7 @@ if __name__ == '__main__':
     cur.execute(str_sql)
     ri_qi = cur.fetchone()[0]
 
-    wb = xlsxwriter.Workbook('2020年开门红竞赛统计表.xlsx')
+    wb = xlsxwriter.Workbook(r'Report\2020年开门红竞赛统计表.xlsx')
     sy = Style(wb)
 
     ws = wb.add_worksheet('昆明机构车险统计表')

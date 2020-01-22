@@ -79,8 +79,10 @@ class IDate():
 
     def ri_qi(self, year=None, month=None, day=None):
         '''
-        返回数据库中最大日期的长日期
-        格式为：YYYY-MM-DD
+        返回长日期
+
+            格式为：YYYY-MM-DD
+            如果无参数则返回当前数据库中最大日期
         '''
         if year is None:
             year = self.nian
