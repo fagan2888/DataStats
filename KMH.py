@@ -97,7 +97,7 @@ def gui_mo_da_cheng(sy, ws, ri_qi):
 
     # 写入表标题
     ws.merge_range(nrow, ncol, nrow, ncol + 4,
-                   data='规模达成奖统计表',
+                   data='非车险规模达成奖统计表',
                    cell_format=sy.biao_ti)
 
     ws.set_row(nrow, height=24)
@@ -186,6 +186,11 @@ def gui_mo_da_cheng(sy, ws, ri_qi):
     ws.merge_range(3, 0, 6, 0, 'A组', sy.wen_zi)
     ws.merge_range(8, 0, 11, 0, 'B组', sy.wen_zi)
 
+    nrow += 2
+    ncol = 0
+    ws.merge_range(nrow, ncol, nrow, ncol + 4,
+                   '注：A组、B组各取前3名获奖', sy.jiao_zhu)
+
     ws.set_column(ncol, ncol, width=5)
     ws.set_column(ncol + 1, ncol + 5, width=11)
 
@@ -197,21 +202,21 @@ def ze_ren_xian(sy, ws, ri_qi):
     nrow = 0
     ncol = 0
 
-    ws.merge_range(nrow, ncol, nrow, ncol + 2,
-                   data='责任险发展奖统计表',
+    ws.merge_range(nrow, ncol, nrow, ncol + 3,
+                   data='非车险责任险发展奖统计表',
                    cell_format=sy.biao_ti)
 
     ws.set_row(nrow, height=24)
 
     nrow += 1
 
-    ws.merge_range(nrow, ncol, nrow, ncol + 2,
+    ws.merge_range(nrow, ncol, nrow, ncol + 3,
                    data=f'数据统计范围：2020-01-01 至 {ri_qi}',
                    cell_format=sy.shuo_ming)
 
     nrow += 1
 
-    biao_tou = ['序号', '机构', '责任险\n季度保费']
+    biao_tou = ['序号', '机构', '保费', '备注']
 
     ws.write_row(nrow, ncol,
                  data=biao_tou,
@@ -237,13 +242,16 @@ def ze_ren_xian(sy, ws, ri_qi):
         nrow += 1
 
     temp = KMH_TJ('分公司整体', '非车险')
-    ws.write(nrow, ncol, '', sy.wen_zi)
-    ws.write(nrow, ncol + 1, temp.ming_cheng, sy.wen_zi)
+    ws.merge_range(nrow, ncol, nrow, ncol + 1,
+                   temp.ming_cheng, sy.wen_zi)
     ws.write(nrow, ncol + 2, temp.ze_ren_xian, sy.shu_zi)
+
+    ws.merge_range(3, 3, 11, 3, '10万元入围\n季度前三名获奖', sy.bei_zhu)
 
     ws.set_column(ncol, ncol, width=8)
     ws.set_column(ncol + 1, ncol + 1, width=12)
     ws.set_column(ncol + 2, ncol + 2, width=16)
+    ws.set_column(ncol + 3, ncol + 3, width=16)
 
 
 def su_ze_xian(sy, ws, ri_qi):
@@ -253,21 +261,21 @@ def su_ze_xian(sy, ws, ri_qi):
     nrow = 0
     ncol = 0
 
-    ws.merge_range(nrow, ncol, nrow, ncol + 2,
-                   data='诉讼保全激励奖统计表',
+    ws.merge_range(nrow, ncol, nrow, ncol + 3,
+                   data='非车险诉讼保全激励奖统计表',
                    cell_format=sy.biao_ti)
 
     ws.set_row(nrow, height=24)
 
     nrow += 1
 
-    ws.merge_range(nrow, ncol, nrow, ncol + 2,
+    ws.merge_range(nrow, ncol, nrow, ncol + 3,
                    data=f'数据统计范围：2020-01-01 至 {ri_qi}',
                    cell_format=sy.shuo_ming)
 
     nrow += 1
 
-    biao_tou = ['序号', '机构', '季度保费']
+    biao_tou = ['序号', '机构', '保费', '备注']
 
     ws.write_row(nrow, ncol,
                  data=biao_tou,
@@ -292,13 +300,15 @@ def su_ze_xian(sy, ws, ri_qi):
         nrow += 1
 
     temp = KMH_TJ('分公司整体', '非车险')
-    ws.write(nrow, ncol, '', sy.wen_zi)
-    ws.write(nrow, ncol + 1, temp.ming_cheng, sy.wen_zi)
+    ws.merge_range(nrow, ncol, nrow, ncol + 1,
+                   temp.ming_cheng, sy.wen_zi)
     ws.write(nrow, ncol + 2, temp.su_ze_xian, sy.shu_zi)
+    ws.merge_range(3, 3, 11, 3, '5万元入围\n季度前三名获奖', sy.bei_zhu)
 
     ws.set_column(ncol, ncol, width=8)
     ws.set_column(ncol + 1, ncol + 1, width=12)
     ws.set_column(ncol + 2, ncol + 2, width=16)
+    ws.set_column(ncol + 3, ncol + 3, width=16)
 
 
 def ji_gou_jia_yi_xian(sy, ws, ri_qi):
@@ -309,7 +319,7 @@ def ji_gou_jia_yi_xian(sy, ws, ri_qi):
     ncol = 0
 
     ws.merge_range(nrow, ncol, nrow, ncol + 6,
-                   data='机构驾意险保费达成奖统计表',
+                   data='非车险机构驾意险保费达成奖统计表',
                    cell_format=sy.biao_ti)
 
     ws.set_row(nrow, height=24)
@@ -322,7 +332,7 @@ def ji_gou_jia_yi_xian(sy, ws, ri_qi):
 
     nrow += 1
 
-    biao_tou = ['序号', '机构', '季度保费',
+    biao_tou = ['序号', '机构', '保费',
                 '一阶段\n任务', '一阶段\n时间进度',
                 '二阶段\n任务', '二阶段\n时间进度']
 
@@ -357,8 +367,8 @@ def ji_gou_jia_yi_xian(sy, ws, ri_qi):
         nrow += 1
 
     temp = KMH_TJ('分公司整体', '驾意险')
-    ws.write(nrow, ncol, '', sy.wen_zi)
-    ws.write(nrow, ncol + 1, temp.ming_cheng, sy.wen_zi)
+    ws.merge_range(nrow, ncol, nrow, ncol + 1,
+                   temp.ming_cheng, sy.wen_zi)
     ws.write(nrow, ncol + 2, temp.nian_bao_fei(), sy.shu_zi)
     ws.write(nrow, ncol + 3, temp.ren_wu('一阶段任务'), sy.wen_zi)
     ws.write(nrow, ncol + 4, temp.shi_jian_da_cheng('一阶段任务'), sy.jin_du)
@@ -381,7 +391,7 @@ def ge_ren_jia_yi_xian(sy, ws, ri_qi, cur):
     ncol = 0
 
     ws.merge_range(nrow, ncol, nrow, ncol + 4,
-                   data='驾意险月度个人销售奖统计表',
+                   data='非车险驾意险月度个人销售奖统计表',
                    cell_format=sy.biao_ti)
 
     ws.set_row(nrow, height=24)
@@ -394,7 +404,7 @@ def ge_ren_jia_yi_xian(sy, ws, ri_qi, cur):
 
     nrow += 1
 
-    biao_tou = ['排名', '中支', '姓名', '驾意险\n月度保费', '驾意险\n签单笔数']
+    biao_tou = ['排名', '中支', '姓名', '月度保费', '签单笔数']
 
     ws.write_row(nrow, ncol,
                  data=biao_tou,
@@ -411,7 +421,8 @@ def ge_ren_jia_yi_xian(sy, ws, ri_qi, cur):
                 ON [2020年].[中心支公司] = [中心支公司].[中心支公司] \
                 WHERE [险种名称] = '0621驾乘人员人身意外伤害保险(B款)' \
                 GROUP BY [业务员], [中心支公司简称] \
-                ORDER BY [保费] DESC"
+                ORDER BY [保费] DESC \
+                LIMIT 20"
 
     cur.execute(str_sql)
 
@@ -422,6 +433,10 @@ def ge_ren_jia_yi_xian(sy, ws, ri_qi, cur):
         ws.write(nrow, ncol + 3, d[2], sy.shu_zi)
         ws.write(nrow, ncol + 4, d[3], sy.wen_zi)
         nrow += 1
+
+    nrow += 1
+    ws.merge_range(nrow, ncol, nrow, ncol + 4,
+                   '注：月度前10名获奖', sy.jiao_zhu)
 
     ws.set_column(ncol, ncol, width=6)
     ws.set_column(ncol + 1, ncol + 2, width=12)
@@ -439,7 +454,7 @@ def jia_yi_xian_lian_dong(sy, ws, ri_qi, cur):
     ncol = 0
 
     ws.merge_range(nrow, ncol, nrow, ncol + 5,
-                   data='驾意险月度个人联动率奖统计表',
+                   data='非车险驾意险月度个人联动率奖统计表',
                    cell_format=sy.biao_ti)
 
     ws.set_row(nrow, height=24)
@@ -477,14 +492,21 @@ def jia_yi_xian_lian_dong(sy, ws, ri_qi, cur):
         che[d[0]] = d[1]
 
     str_sql = f"SELECT [中心支公司简称], \
-                [业务员], \
-                SUM([保单笔数]) AS 保单数\
-                FROM [2020年] \
-                JOIN [中心支公司] \
-                ON [2020年].[中心支公司] = [中心支公司].[中心支公司] \
-                WHERE [险种名称] = '0621驾乘人员人身意外伤害保险(B款)' \
-                GROUP BY [业务员], [中心支公司简称] \
-                ORDER BY [保单数] DESC"
+        [业务员], \
+        [保单数] \
+        FROM \
+        (SELECT \
+        [中心支公司简称], \
+        [业务员], \
+        SUM ([保单笔数]) AS [保单数] \
+        FROM [2020年] \
+        JOIN [中心支公司] \
+        ON [2020年].[中心支公司] = [中心支公司].[中心支公司] \
+        WHERE [险种名称] = '0621驾乘人员人身意外伤害保险(B款)' \
+        GROUP  BY [业务员], [中心支公司简称] \
+        ORDER  BY [保单数] DESC)AS T \
+        WHERE T.保单数 >= 20 \
+        LIMIT 20"
 
     cur.execute(str_sql)
     row_data = []
@@ -495,7 +517,7 @@ def jia_yi_xian_lian_dong(sy, ws, ri_qi, cur):
                             d[1][9:],
                             d[2],
                             che[d[1]],
-                             d[2] / che[d[1]]))
+                            d[2] / che[d[1]]))
         else:
             row_data.append((d[0],
                             d[1][9:],
@@ -512,8 +534,11 @@ def jia_yi_xian_lian_dong(sy, ws, ri_qi, cur):
         ws.write(nrow, ncol + 3, d[2], sy.wen_zi)
         ws.write(nrow, ncol + 4, d[3], sy.wen_zi)
         ws.write(nrow, ncol + 5, d[4], sy.jin_du)
-
         nrow += 1
+
+    nrow += 1
+    ws.merge_range(nrow, ncol, nrow, ncol + 4,
+                   '注：月度前10名获奖', sy.jiao_zhu)
 
     ws.set_column(ncol, ncol, width=6)
     ws.set_column(ncol + 1, ncol + 2, width=12)

@@ -41,7 +41,7 @@ def tuan_dui(wb: xlsxwriter.Workbook,
                    first_col=ncol,
                    last_row=nrow,
                    last_col=ncol + 6,
-                   data=f'数据统计范围：2020-01-01 至 {idate.ri_qi()}',
+                   data=f'数据统计范围：2020-01-01 至 {idate.long_ri_qi()}',
                    cell_format=sy.shuo_ming)
     nrow += 1
     logging.debug('统计范围说明性文字写入完成')
@@ -59,84 +59,123 @@ def tuan_dui(wb: xlsxwriter.Workbook,
     logging.debug('表头写入完成')
 
     # 设置机构名称列表
-    name_list = [
-        '分公司整体', '分公司本部', '分公司销售二部', '直拓业务团队', '航旅项目',
-        '曲靖中支本部', '曲靖中支销售部', '曲靖中支销售一部',
-        '曲靖中支销售二部',
-        '文山中支本部', '文山中支营业一部销售一部',
-        '文山中支营业二部销售一部',
-        '大理中支本部', '大理中支销售一部', '大理中支销售二部',
-        '版纳中支本部', '版纳中支销售一部',
-        '保山中支本部', '保山中支销售一部', '保山中支销售二部',
-        '怒江中支本部', '怒江中支销售一部'
-    ]
+    ji_gou_list = (
+        ('曲靖中支本部', '曲靖一部', '曲靖二部', '曲靖三部'),
+        ('文山中支本部', '文山一部', '文山二部'),
+        ('保山中支本部', '保山一部', '保山二部'),
+        ('大理中支本部',),
+        ('版纳中支本部',),
+        ('怒江中支本部',)
+    )
 
     # 设置险种名称列表
-    risk_list = ['车险', '非车险', '驾意险', '整体']
+    risk_list = ('车险', '非车险', '驾意险', '整体')
+
+    hui = False  # 机构名称改变的计数器
+    xu_hao = 1  # 序号计数器
 
     # 将数据写入表中
-    for name in name_list:
-
-        # 根据机构名称设置机构类型
-        if name == '分公司整体':
-            xu_hao = ''  # 分公司不参与排名
+    for name_list in ji_gou_list:
+        if hui is False:
             wen_zi_temp = sy.wen_zi
             shu_zi_temp = sy.shu_zi
             jin_du_temp = sy.jin_du
-        elif xu_hao == '':
-            xu_hao = 1
-            wen_zi_temp = sy.wen_zi_hui
-            shu_zi_temp = sy.shu_zi_hui
-            jin_du_temp = sy.jin_du_hui
-        # 根据序号设置单元格是否增加底色
-        elif xu_hao % 2 == 0:
-            xu_hao += 1
-            wen_zi_temp = sy.wen_zi_hui
-            shu_zi_temp = sy.shu_zi_hui
-            jin_du_temp = sy.jin_du_hui
+            hui = True
         else:
-            xu_hao += 1
-            wen_zi_temp = sy.wen_zi
-            shu_zi_temp = sy.shu_zi
-            jin_du_temp = sy.jin_du
+            wen_zi_temp = sy.wen_zi_hui
+            shu_zi_temp = sy.shu_zi_hui
+            jin_du_temp = sy.jin_du_hui
+            hui = False
 
-        # 写入序号列，序号占4行
-        ws.merge_range(first_row=nrow,
-                       first_col=ncol,
-                       last_row=nrow + 3,
-                       last_col=ncol,
-                       data=xu_hao,
-                       cell_format=wen_zi_temp)
+        n = len(name_list) * 4 - 1
+        ws.merge_range(nrow, ncol, nrow + n, ncol,
+                       xu_hao, wen_zi_temp)
 
-        # 写入 机构名称列，名称占4行
-        ws.merge_range(first_row=nrow,
-                       first_col=ncol + 1,
-                       last_row=nrow + 3,
-                       last_col=ncol + 1,
-                       data=name,
-                       cell_format=wen_zi_temp)
+        for name in name_list:
+            if hui is False:
+                wen_zi_temp = sy.wen_zi_hui
+                shu_zi_temp = sy.shu_zi_hui
+                jin_du_temp = sy.jin_du_hui
+            else:
+                wen_zi_temp = sy.wen_zi
+                shu_zi_temp = sy.shu_zi
+                jin_du_temp = sy.jin_du
 
-        # 根据险种名称 设置险种类型
-        for risk in risk_list:
-            if risk == '整体':
-                if xu_hao == '' or xu_hao % 2 == 0:
-                    wen_zi_temp = sy.wen_zi_cu
-                    shu_zi_temp = sy.shu_zi_cu
-                    jin_du_temp = sy.jin_du_cu
+            ws.merge_range(
+                nrow, ncol + 1, nrow + 3, ncol + 1,
+                name, wen_zi_temp
+            )
+
+            for risk in risk_list:
+                if risk == '整体':
+                    if hui is False:
+                        wen_zi_temp = sy.wen_zi_cu_hui
+                        shu_zi_temp = sy.shu_zi_cu_hui
+                        jin_du_temp = sy.jin_du_cu_hui
+                    else:
+                        wen_zi_temp = sy.wen_zi_cu
+                        shu_zi_temp = sy.shu_zi_cu
+                        jin_du_temp = sy.jin_du_cu
                 else:
-                    wen_zi_temp = sy.wen_zi_cu_hui
-                    shu_zi_temp = sy.shu_zi_cu_hui
-                    jin_du_temp = sy.jin_du_cu_hui
+                    if hui is False:
+                        wen_zi_temp = sy.wen_zi_hui
+                        shu_zi_temp = sy.shu_zi_hui
+                        jin_du_temp = sy.jin_du_hui
+                    else:
+                        wen_zi_temp = sy.wen_zi
+                        shu_zi_temp = sy.shu_zi
+                        jin_du_temp = sy.jin_du
 
-            d = Tong_Ji(name=name, risk=risk)
+                d = Tong_Ji(name=name, risk=risk)
+                ws.write(nrow, ncol + 2, d.xian_zhong, wen_zi_temp)
+                ws.write(nrow, ncol + 3, d.ren_wu(), wen_zi_temp)
+                ws.write(nrow, ncol + 4, d.nian_bao_fei(), shu_zi_temp)
+                ws.write(nrow, ncol + 5, d.shi_jian_da_cheng, jin_du_temp)
+                ws.write(nrow, ncol + 6, d.nian_tong_bi(ny=1), jin_du_temp)
+                nrow += 1
+            logging.debug(f'{name}机构数据写入完成')
+        xu_hao += 1
 
-            ws.write(nrow, ncol + 2, d.xian_zhong, wen_zi_temp)
-            ws.write(nrow, ncol + 3, d.ren_wu(), wen_zi_temp)
-            ws.write(nrow, ncol + 4, d.nian_bao_fei(), shu_zi_temp)
-            ws.write(nrow, ncol + 5, d.shi_jian_da_cheng, jin_du_temp)
-            ws.write(nrow, ncol + 6, d.nian_tong_bi(ny=1), jin_du_temp)
-            nrow += 1
-        logging.debug(f'{name}机构数据写入完成')
+    risk_list = ('车险', '非车险', '驾意险')
+    ws.merge_range(nrow, ncol, nrow + 4, ncol,
+                   xu_hao, sy.wen_zi)
+
+    ws.merge_range(nrow, ncol + 1, nrow + 4, ncol + 1,
+                   '分公司本部', sy.wen_zi)
+
+    for risk in risk_list:
+        d = Tong_Ji(name='分公司本部', risk=risk)
+        ws.write(nrow, ncol + 2, d.xian_zhong, sy.wen_zi)
+        ws.write(nrow, ncol + 3, d.ren_wu(), sy.wen_zi)
+        ws.write(nrow, ncol + 4, d.nian_bao_fei(), sy.shu_zi)
+        ws.write(nrow, ncol + 5, d.shi_jian_da_cheng, sy.jin_du)
+        ws.write(nrow, ncol + 6, d.nian_tong_bi(ny=1), sy.jin_du)
+        nrow += 1
+
+    d = Tong_Ji(name='航旅项目', risk='整体')
+    ws.write(nrow, ncol + 2, '航旅项目', sy.wen_zi)
+    ws.write(nrow, ncol + 3, d.ren_wu(), sy.wen_zi)
+    ws.write(nrow, ncol + 4, d.nian_bao_fei(), sy.shu_zi)
+    ws.write(nrow, ncol + 5, d.shi_jian_da_cheng, sy.jin_du)
+    ws.write(nrow, ncol + 6, d.nian_tong_bi(ny=1), sy.jin_du)
+    nrow += 1
+
+    d = Tong_Ji(name='分公司本部', risk='整体')
+    h = Tong_Ji(name='航旅项目', risk='整体')
+
+    ren_wu = d.ren_wu() + h.ren_wu()
+    nian_bao_fei = d.nian_bao_fei() + h.nian_bao_fei()
+    shi_jian_da_cheng = nian_bao_fei / ren_wu / d.shi_jian_jin_du
+    wang_nian_bao_fei = d.wang_nian_bao_fei(ny=1) + h.wang_nian_bao_fei(ny=1)
+    nian_tong_bi = nian_bao_fei / wang_nian_bao_fei - 1
+
+    ws.write(nrow, ncol + 2, '整体', sy.wen_zi_cu)
+    ws.write(nrow, ncol + 3, ren_wu, sy.wen_zi_cu)
+    ws.write(nrow, ncol + 4, nian_bao_fei, sy.shu_zi_cu)
+    ws.write(nrow, ncol + 5, shi_jian_da_cheng, sy.jin_du_cu)
+    ws.write(nrow, ncol + 6, nian_tong_bi, sy.jin_du_cu)
+
+    logging.debug(f'分公司本部机构数据写入完成')
 
     # 开始设置列宽
     ncol = 0
@@ -147,4 +186,4 @@ def tuan_dui(wb: xlsxwriter.Workbook,
 
     logging.debug('列宽设置完成')
     logging.debug('内部团队数据统计表写入完成')
-    logging.debug('*' * 60)
+    logging.debug('-' * 60)

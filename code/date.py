@@ -77,7 +77,7 @@ class IDate():
         '''
         return self._xun
 
-    def ri_qi(self, year=None, month=None, day=None):
+    def long_ri_qi(self, year=None, month=None, day=None):
         '''
         返回长日期
 
@@ -94,3 +94,19 @@ class IDate():
             day = self.ri
 
         return f'{year}-{month:02d}-{day:02d}'
+
+    def duan_ri_qi(self, month=None, day=None):
+        '''
+        返回短日期
+
+            格式为：MM-DD
+            如果无参数则返回当前数据库中最大日期
+        '''
+
+        if month is None:
+            month = self.yue
+
+        if day is None:
+            day = self.ri
+
+        return f'{month:02d}-{day:02d}'

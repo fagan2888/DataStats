@@ -258,7 +258,7 @@ class Tong_Ji(object):
             FROM [{year}年] \
             {self.ji_gou_join(year)} \
             {self.xian_zhong_join(year)} \
-            WHERE [投保确认日期] <= '{self.d.ri_qi()}' \
+            WHERE [投保确认日期] <= '{self.d.long_ri_qi()}' \
             {self.ji_gou_where} \
             {self.xian_zhong_where(year)}"
 
@@ -283,7 +283,7 @@ class Tong_Ji(object):
             FROM [{year}年] \
             {self.ji_gou_join(year=year)} \
             {self.xian_zhong_join(year=year)} \
-            WHERE [投保确认日期] <= '{self.d.ri_qi(year=year)}' \
+            WHERE [投保确认日期] <= '{self.d.long_ri_qi(year=year)}' \
             {self.ji_gou_where} \
             {self.xian_zhong_where(year=year)}"
 
@@ -298,7 +298,7 @@ class Tong_Ji(object):
                      ny: int = None,
                      year: int = None):
         '''
-        返回年保费同比增长率
+        返回当年保费同比增长率
 
         参数：
 
@@ -314,6 +314,30 @@ class Tong_Ji(object):
             return '——'
         else:
             value = self.nian_bao_fei() / self.wang_nian_bao_fei(year=year) - 1
+            return value
+
+    def wang_nian_tong_bi(self,
+                          first_year: int = None,
+                          last_year: int = None,
+                          tong: bool = True):
+        '''
+        返回年保费同比增长率
+
+        参数：
+
+            ny: 同比倒数年数
+                与一年前数据对比则设置为1
+                与两年前数据对比则设置为2
+                以此类推
+        '''
+
+        if self.wang_nian_bao_fei(year=first_year) == 0:
+            return '——'
+        else:
+            value = (
+                self.wang_nian_bao_fei(year=first_year)
+                / self.wang_nian_bao_fei(year=last_year) - 1
+            )
             return value
 
     @lru_cache(maxsize=16)

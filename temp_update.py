@@ -51,7 +51,7 @@ def update(tb_name=None, back=True):
         cur.execute(str_sql)
 
         nrow += 1
-        if nrow % 500 == 0:
+        if nrow % 1000 == 0:
             logging.debug(f'已导入 {nrow} / {ws.max_row} 条数据')
 
     logging.debug('数据写入数据库完成')

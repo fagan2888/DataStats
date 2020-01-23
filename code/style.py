@@ -47,6 +47,7 @@ class Style():
         value.set_font_size(self.font_size-2)
         value.set_align('center')
         value.set_align('vcenter')
+        value.set_text_wrap(True)
         return value
 
     @property
@@ -254,6 +255,32 @@ class Style():
         value.set_align('center')
         value.set_align('vcenter')
         value.set_num_format('0.00%')
+        value.set_border(style=1)
+        return value
+
+    @property
+    def jiao_zhu(self):
+        '''
+        返回说明性文字样式
+        微软雅黑，字体减少两号，居中对齐
+        '''
+        value = self.wb.add_format()
+        value.set_font_name('微软雅黑')
+        value.set_font_size(self.font_size)
+        return value
+
+    @property
+    def bei_zhu(self):
+        '''
+        返回说明性文字样式
+        微软雅黑，字体减少两号，居中对齐
+        '''
+        value = self.wb.add_format()
+        value.set_font_name('微软雅黑')
+        value.set_font_size(self.font_size)
+        value.set_align('center')
+        value.set_align('vcenter')
+        value.set_text_wrap(True)
         value.set_border(style=1)
         return value
 

@@ -40,7 +40,7 @@ def zhong_zhi(wb, ws):
                    first_col=ncol,
                    last_row=nrow,
                    last_col=ncol + 6,
-                   data=f'数据统计范围：2020-01-01 至 {idate.ri_qi()}',
+                   data=f'数据统计范围：2020-01-01 至 {idate.long_ri_qi()}',
                    cell_format=sy.shuo_ming)
     nrow += 1
     logging.debug('统计范围说明性文字写入完成')
@@ -158,4 +158,4 @@ def zhong_zhi(wb, ws):
 
     logging.debug('列宽设置完成')
     logging.debug('三级机构数据统计表写入完成')
-    logging.debug('*' * 60)
+    logging.debug('-' * 60)
