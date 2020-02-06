@@ -2,6 +2,10 @@ import sqlite3
 import logging
 from openpyxl import load_workbook
 
+logging.disable(logging.NOTSET)
+logging.basicConfig(level=logging.DEBUG,
+                    format=' %(asctime)s | %(levelname)s | %(message)s')
+
 
 def update(tb_name=None, back=True):
     """
@@ -13,8 +17,10 @@ def update(tb_name=None, back=True):
     logging.debug('数据库连接成功')
     cur = conn.cursor()
 
+    back = False
+
     if tb_name is None:
-        table = '2020年开门红任务'
+        table = '车险清单'
     else:
         table = tb_name
 
@@ -30,7 +36,7 @@ def update(tb_name=None, back=True):
     logging.debug("数据库数据清空完毕")
 
     # 读入Excel表格数据
-    wb = load_workbook(path)
+    wb = load_workbook(path, read_only=True)
     ws = wb.active
 
     logging.debug("Excel 文件读入成功")
@@ -51,7 +57,7 @@ def update(tb_name=None, back=True):
         cur.execute(str_sql)
 
         nrow += 1
-        if nrow % 1000 == 0:
+        if nrow % 5000 == 0:
             logging.debug(f'已导入 {nrow} / {ws.max_row} 条数据')
 
     logging.debug('数据写入数据库完成')

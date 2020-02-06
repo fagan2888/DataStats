@@ -28,7 +28,7 @@ def zhong_zhi(wb, ws):
                    last_row=nrow,
                    last_col=ncol + 6,
                    data='2020年三级机构数据统计表',
-                   cell_format=sy.biao_ti)
+                   cell_format=sy.title)
 
     # 设置表标题行高为字体的两倍
     ws.set_row(row=nrow, height=24)
@@ -41,7 +41,7 @@ def zhong_zhi(wb, ws):
                    last_row=nrow,
                    last_col=ncol + 6,
                    data=f'数据统计范围：2020-01-01 至 {idate.long_ri_qi()}',
-                   cell_format=sy.shuo_ming)
+                   cell_format=sy.explain)
     nrow += 1
     logging.debug('统计范围说明性文字写入完成')
 
@@ -50,7 +50,7 @@ def zhong_zhi(wb, ws):
                '累计保费', '时间进度\n达成率', '同比\n增长率']
 
     for value in biao_ti:
-        ws.write(nrow, ncol, value, sy.wen_zi_cu_hui)
+        ws.write(nrow, ncol, value, sy.string_bold_gray)
         ncol += 1
 
     nrow += 1
@@ -90,25 +90,25 @@ def zhong_zhi(wb, ws):
         # 根据机构名称设置机构类型
         if name == '分公司整体':
             xu_hao = ''  # 分公司不参与排名
-            wen_zi_temp = sy.wen_zi
-            shu_zi_temp = sy.shu_zi
-            jin_du_temp = sy.jin_du
+            wen_zi = sy.string
+            shu_zi = sy.number
+            bai_fen_bi = sy.percent
         elif xu_hao == '':
             xu_hao = 1
-            wen_zi_temp = sy.wen_zi_hui
-            shu_zi_temp = sy.shu_zi_hui
-            jin_du_temp = sy.jin_du_hui
+            wen_zi = sy.string_gray
+            shu_zi = sy.number_gray
+            bai_fen_bi = sy.percent_gray
         # 根据序号设置单元格是否增加底色
         elif xu_hao % 2 == 0:
             xu_hao += 1
-            wen_zi_temp = sy.wen_zi_hui
-            shu_zi_temp = sy.shu_zi_hui
-            jin_du_temp = sy.jin_du_hui
+            wen_zi = sy.string_gray
+            shu_zi = sy.number_gray
+            bai_fen_bi = sy.percent_gray
         else:
             xu_hao += 1
-            wen_zi_temp = sy.wen_zi
-            shu_zi_temp = sy.shu_zi
-            jin_du_temp = sy.jin_du
+            wen_zi = sy.string
+            shu_zi = sy.number
+            bai_fen_bi = sy.percent
 
         # 写入序号列，序号占5行
         ws.merge_range(first_row=nrow,
@@ -116,7 +116,7 @@ def zhong_zhi(wb, ws):
                        last_row=nrow + 4,
                        last_col=ncol,
                        data=xu_hao,
-                       cell_format=wen_zi_temp)
+                       cell_format=wen_zi)
 
         # 写入 机构名称列，名称占5行
         ws.merge_range(first_row=nrow,
@@ -124,37 +124,37 @@ def zhong_zhi(wb, ws):
                        last_row=nrow + 4,
                        last_col=ncol + 1,
                        data=name,
-                       cell_format=wen_zi_temp)
+                       cell_format=wen_zi)
 
         # 根据险种名称 设置险种类型
         for risk in risk_list:
             if risk == '整体':
                 if xu_hao == '' or xu_hao % 2 == 0:
-                    wen_zi_temp = sy.wen_zi_cu
-                    shu_zi_temp = sy.shu_zi_cu
-                    jin_du_temp = sy.jin_du_cu
+                    wen_zi = sy.string_bold
+                    shu_zi = sy.number_bold
+                    bai_fen_bi = sy.percent_bold
                 else:
-                    wen_zi_temp = sy.wen_zi_cu_hui
-                    shu_zi_temp = sy.shu_zi_cu_hui
-                    jin_du_temp = sy.jin_du_cu_hui
+                    wen_zi = sy.string_bold_gray
+                    shu_zi = sy.number_bold_gray
+                    bai_fen_bi = sy.percent_bold_gray
 
             d = Tong_Ji(name=name,
                         risk=risk)
 
-            ws.write(nrow, ncol + 2, d.xian_zhong, wen_zi_temp)
-            ws.write(nrow, ncol + 3, d.ren_wu(), wen_zi_temp)
-            ws.write(nrow, ncol + 4, d.nian_bao_fei(), shu_zi_temp)
-            ws.write(nrow, ncol + 5, d.shi_jian_da_cheng, jin_du_temp)
-            ws.write(nrow, ncol + 6, d.nian_tong_bi(ny=1), jin_du_temp)
+            ws.write(nrow, ncol + 2, d.xian_zhong, wen_zi)
+            ws.write(nrow, ncol + 3, d.ren_wu(), wen_zi)
+            ws.write(nrow, ncol + 4, d.nian_bao_fei(), shu_zi)
+            ws.write(nrow, ncol + 5, d.shi_jian_da_cheng(), bai_fen_bi)
+            ws.write(nrow, ncol + 6, d.nian_tong_bi(), bai_fen_bi)
             nrow += 1
         logging.debug(f'{name}机构数据写入完成')
 
     # 开始设置列宽
     ncol = 0
     ws.set_column(first_col=ncol, last_col=ncol, width=4)
-    ws.set_column(first_col=ncol + 1, last_col=ncol + 1, width=10)
-    ws.set_column(first_col=ncol + 2, last_col=ncol + 4, width=8)
-    ws.set_column(first_col=ncol + 5, last_col=ncol + 6, width=10)
+    ws.set_column(first_col=ncol + 1, last_col=ncol + 1, width=12)
+    ws.set_column(first_col=ncol + 2, last_col=ncol + 4, width=10)
+    ws.set_column(first_col=ncol + 5, last_col=ncol + 6, width=12)
 
     logging.debug('列宽设置完成')
     logging.debug('三级机构数据统计表写入完成')

@@ -52,7 +52,7 @@ class KMH_TJ(Tong_Ji):
                     {self.ji_gou_join(self.d.nian)} \
                     WHERE  [{self.d.nian}年].[险种大类] = '责任保险' \
                     AND [{self.d.nian}年].[险种名称] <> '0460诉讼财产保全责任保险' \
-                    {self.ji_gou_where} \
+                    {self.ji_gou_where()} \
                     AND [投保确认日期] <= '{ri_qi}'"
 
         self.cur.execute(str_sql)
@@ -73,7 +73,7 @@ class KMH_TJ(Tong_Ji):
                     FROM [{self.d.nian}年] \
                     {self.ji_gou_join(self.d.nian)} \
                     WHERE [{self.d.nian}年].[险种名称] = '0460诉讼财产保全责任保险' \
-                    {self.ji_gou_where} \
+                    {self.ji_gou_where()} \
                     AND [投保确认日期] <= '{ri_qi}'"
 
         self.cur.execute(str_sql)
