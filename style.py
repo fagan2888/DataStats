@@ -250,7 +250,7 @@ class Style:
         value.set_font_size(self.font_size)
         value.set_align("center")
         value.set_align("vcenter")
-        value.set_num_format("#,##0.00")
+        value.set_num_format("_#,##0.00;[红色]-#,##0.00;_*\"-\"??_;")
         value.set_border(style=1)
         return value
 
@@ -300,7 +300,7 @@ class Style:
         value.set_bold(True)
         value.set_align("center")
         value.set_align("vcenter")
-        value.set_num_format("#,##0.00")
+        value.set_num_format("_#,##0.00;[红色]-#,##0.00;_*\"-\"??_;")
         value.set_border(style=1)
         return value
 
@@ -404,7 +404,7 @@ class Style:
         value.set_bg_color(self.gray_code)
         value.set_align("center")
         value.set_align("vcenter")
-        value.set_num_format("#,##0.00")
+        value.set_num_format("_#,##0.00;[红色]-#,##0.00;_*\"-\"??_;")
         value.set_border(style=1)
         return value
 
@@ -457,7 +457,7 @@ class Style:
         value.set_bold(True)
         value.set_align("center")
         value.set_align("vcenter")
-        value.set_num_format("#,##0.00")
+        value.set_num_format("?,??0.00;[红色]-?,??0.00;"-"??;")
         value.set_border(style=1)
         return value
 
