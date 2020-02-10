@@ -17,6 +17,16 @@ class Style:
         self._wb = wb
 
     @property
+    def number_format(self):
+        """数字单元格格式"""
+        return "?,??0.00;[红色]-?,??0.00;\"-\";"
+
+    @property
+    def percent_format(self):
+        """"""
+        return "0.00%;[红色]-0.00%;\"-\";"
+
+    @property
     def black(self):
         """
         返回一个字体颜色的对象，黑色
@@ -250,7 +260,7 @@ class Style:
         value.set_font_size(self.font_size)
         value.set_align("center")
         value.set_align("vcenter")
-        value.set_num_format("_#,##0.00;[红色]-#,##0.00;_*\"-\"??_;")
+        value.set_num_format(self.number_format)
         value.set_border(style=1)
         return value
 
@@ -266,7 +276,7 @@ class Style:
         value.set_font_size(self.font_size)
         value.set_align("center")
         value.set_align("vcenter")
-        value.set_num_format("0.00%")
+        value.set_num_format(self.percent_format)
         value.set_border(style=1)
         return value
 
@@ -300,7 +310,7 @@ class Style:
         value.set_bold(True)
         value.set_align("center")
         value.set_align("vcenter")
-        value.set_num_format("_#,##0.00;[红色]-#,##0.00;_*\"-\"??_;")
+        value.set_num_format(self.number_format)
         value.set_border(style=1)
         return value
 
@@ -317,7 +327,7 @@ class Style:
         value.set_bold(True)
         value.set_align("center")
         value.set_align("vcenter")
-        value.set_num_format("0.00%")
+        value.set_num_format(self.percent_format)
         value.set_border(style=1)
         return value
 
@@ -404,7 +414,7 @@ class Style:
         value.set_bg_color(self.gray_code)
         value.set_align("center")
         value.set_align("vcenter")
-        value.set_num_format("_#,##0.00;[红色]-#,##0.00;_*\"-\"??_;")
+        value.set_num_format(self.number_format)
         value.set_border(style=1)
         return value
 
@@ -421,7 +431,7 @@ class Style:
         value.set_bg_color(self.gray_code)
         value.set_align("center")
         value.set_align("vcenter")
-        value.set_num_format("0.00%")
+        value.set_num_format(self.percent_format)
         value.set_border(style=1)
         return value
 
@@ -457,7 +467,7 @@ class Style:
         value.set_bold(True)
         value.set_align("center")
         value.set_align("vcenter")
-        value.set_num_format("?,??0.00;[红色]-?,??0.00;"-"??;")
+        value.set_num_format(self.number_format)
         value.set_border(style=1)
         return value
 
@@ -475,7 +485,7 @@ class Style:
         value.set_bold(True)
         value.set_align("center")
         value.set_align("vcenter")
-        value.set_num_format("0.00%")
+        value.set_num_format(self.percent_format)
         value.set_border(style=1)
         return value
 
@@ -634,40 +644,6 @@ class Style:
         return "#0070C0"
 
     @property
-    def menu(self):
-        """
-        返回快捷菜单里文字样式
-
-        微软雅黑，加粗，下划线，灰色背景，蓝色字体，居中对齐
-        """
-        value = self.wb.add_format()
-        value.set_font_name("微软雅黑")
-        value.set_font_size(self.font_size)
-        value.set_bold(True)
-        value.set_underline(True)
-        value.set_bg_color(self.gray_code)
-        value.set_align("center")
-        value.set_align("vcenter")
-        value.set_border(style=1)
-        value.set_color(self.blue_code)
-
-        return value
-
-    @property
-    def font_size(self):
-        """
-        返回字体的基准大小
-        """
-        return 11
-
-    @property
-    def wb(self):
-        """
-        返回工作簿对象
-        """
-        return self._wb
-
-    @property
     def biao_ti(self):
         """
         返回表标题样式
@@ -742,7 +718,7 @@ class Style:
         value.set_font_size(self.font_size)
         value.set_align("center")
         value.set_align("vcenter")
-        value.set_num_format("#,##0.00")
+        value.set_num_format(self.number_format)
         value.set_border(style=1)
         return value
 
