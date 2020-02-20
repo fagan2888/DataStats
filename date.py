@@ -10,6 +10,9 @@ class IDate():
         self._conn = sqlite3.connect(r"Data\data.db")
         self._cur = self._conn.cursor()
 
+        sql_str = f"ATTACH DATABASE 'Data\\{year}年.db' AS [{year}年]"
+        self._cur.execute(sql_str)
+
         str_sql = f"SELECT [年份], [月份], [日数], [星期], \
                     [周数], [季度], [旬]\
                     FROM [日期] \

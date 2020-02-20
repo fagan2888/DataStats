@@ -27,7 +27,7 @@ class Excel_Write_Base(object):
         负责初始化写入数据时所需的各项数据的公共变量
     """
 
-    def __init__(self, wb: xlsxwriter.Workbook, name: str, conn: sqlite3.Connection):
+    def __init__(self, wb: xlsxwriter.Workbook, name: str):
         """
         初始化基础变量
 
@@ -42,16 +42,20 @@ class Excel_Write_Base(object):
         self._wb = wb
 
         # 工作表对象
-        self._ws: xlsxwriter.worksheet = None
+        self._ws: xlsxwriter.Workbook.worksheet_class = None
 
         # 机构名称
         self._name = name
 
         # 数据库连接对象
-        self._conn = conn
+        self._conn = None
+
+        self._set_conn()
 
         # 数据库操作的游标对象
-        self._cur = self._conn.cursor()
+        self._cur = None
+
+        self._set_cur()
 
         # 数据库内数据的最大日期
         self._idate = IDate(year=2020)
@@ -73,8 +77,11 @@ class Excel_Write_Base(object):
         # 首列的列名称
         self._first_col_name: str = None
 
+        # 首年的第一行信息
+        self.set_first_year_header_1()
+
         # 表个第一行表头的信息
-        self.set_header_row_1()
+        self.set_other_year_header_1()
 
         # 表个第二行表头的信息
         self._header_row_2: list = None
@@ -102,7 +109,7 @@ class Excel_Write_Base(object):
         """
         return self._risk
 
-    def set_risks(self, risks: list):
+    def set_risk_list(self, risks: list):
         """
         设置统计的险种列表
 
@@ -113,7 +120,7 @@ class Excel_Write_Base(object):
         self._risks = risks
 
     @property
-    def risks(self):
+    def risk_list(self):
         """
         返回统计的险种列表
 
@@ -138,7 +145,7 @@ class Excel_Write_Base(object):
         self._menu.append((nrow, risk))
 
     @property
-    def menu(self):
+    def menu(self) -> list:
         """
         返回快捷菜单栏中的锚和文本信息
 
@@ -148,7 +155,7 @@ class Excel_Write_Base(object):
         return self._menu
 
     @property
-    def years(self):
+    def year_list(self) -> list:
         """
         返回统计的年份列表
 
@@ -181,22 +188,54 @@ class Excel_Write_Base(object):
         self._table_name = table_name
         self.add_worksheet(self._table_name)
 
+    def _set_conn(self):
+        """
+        设置数据库链接对象
+
+            参数：
+                无
+            返回值：
+                无
+        """
+        self._conn = sqlite3.connect(r"Data\data.db")
+
     @property
-    def conn(self):
+    def conn(self) -> sqlite3.Connection:
         """
         返回数据库连接对象
+
+            参数：
+                无
+            返回值：
+                sqlite3.Connection
         """
         return self._conn
 
+    def _set_cur(self):
+        """
+        设置数据库的游标对象
+
+            参数：
+                无
+            返回值：
+                无
+        """
+        self._cur = self.conn.cursor()
+
     @property
-    def cur(self):
+    def cur(self) -> sqlite3.Cursor:
         """
         返回数据库操作的游标对象
+
+            参数：
+                无
+            返回值：
+                sqlite3.Cursor
         """
         return self._cur
 
     @property
-    def ws(self):
+    def ws(self) -> xlsxwriter.Workbook.worksheet_class:
         """
         返回需要操作的工作表对象
         """
@@ -212,12 +251,11 @@ class Excel_Write_Base(object):
                 table_name:
                     str, 工作表名称
         """
-
         self._ws = self.wb.add_worksheet(name=table_name)
         return self._ws
 
     @property
-    def date(self):
+    def date(self) -> IDate:
         """
         返回数据库中当前的时间对象
         """
@@ -231,14 +269,14 @@ class Excel_Write_Base(object):
         return self._name
 
     @property
-    def wb(self):
+    def wb(self) -> xlsxwriter.Workbook:
         """
         返回需要操作的工作簿对象
         """
         return self._wb
 
     @property
-    def style(self):
+    def style(self) -> Style:
         """
         返回Excel表格所需的单元格样式对象
         """
@@ -257,7 +295,26 @@ class Excel_Write_Base(object):
         """
         return self._first_col_name
 
-    def set_header_row_1(self):
+    def set_first_year_header_1(self):
+        """
+        设置第一年的表头第一行信息
+
+            第一年的表头第一行信息与其他信息不同，因为第一年为当前年份，信息保护任务进度
+            时间进度，时间进度达成率等信息，所以第一年的跨行更多
+        """
+
+        self._first_year_header_1 = self.year_list[0]
+
+    @property
+    def first_year_header_1(self):
+        """
+        表格表头的第一行信息
+
+            返回的信息是一个包含第一行表头所有列名的一个列表
+        """
+        return self._first_year_header_1
+
+    def set_other_year_header_1(self):
         """
         设置表格表头的第一行信息
 
@@ -266,42 +323,61 @@ class Excel_Write_Base(object):
 
         header = []
 
-        for value in self.years:
+        for value in self.year_list[1:]:
             header.append(f"{value}年")
 
-        self._header_row_1 = header
+        self._other_year_header_1 = header
 
     @property
-    def header_row_1(self):
+    def other_year_header_1(self):
         """
         表格表头的第一行信息
 
             返回的信息是一个包含第一行表头所有列名的一个列表
         """
-        return self._header_row_1
+        return self._other_year_header_1
 
-    def set_header_row_2(self, header: list):
+    def set_first_year_header_2(self, header: list):
         """
-        设置表格表头的第二行信息
-
-            通常第二行信息为年份信息
+        设置表格表头中第一年的第二行信息
 
             参数：
                 header：
                     list，包含第二行表头所有列名的一个列表
         """
 
-        self._header_row_2 = header
+        self._first_year_header_2 = header
+
+    def set_other_year_header_2(self, header: list):
+        """
+        设置表格表头中除第一年外的第二行信息
+
+            参数：
+                header：
+                    list，包含第二行表头所有列名的一个列表
+        """
+
+        self._other_year_header_2 = header
 
     @property
-    def header_row_2(self):
+    def first_year_header_2(self):
         """
-        表格表头的第二行信息
+        表格表格表头中除第一年外的第二行信息
 
             返回的信息是一个包含第二行表头所有列名的一个列表
         """
 
-        return self._header_row_2
+        return self._first_year_header_2
+
+    @property
+    def other_year_header_2(self):
+        """
+        表格表格表头中除第一年外的第二行信息
+
+            返回的信息是一个包含第二行表头所有列名的一个列表
+        """
+
+        return self._other_year_header_2
 
     def write_menu(self) -> None:
         """
@@ -342,7 +418,9 @@ class Excel_Write_Base(object):
                     str，统计表所对应的险种名称
         """
         # 计算表头所占宽度
-        title_width = len(self.header_row_1) * len(self.header_row_2)
+        title_width = len(self.first_year_header_2) + len(
+            self.other_year_header_1
+        ) * len(self.other_year_header_2)
 
         # 列计数器归零
         ncol = 0
@@ -414,9 +492,8 @@ class Excel_Write_Base(object):
         """
         raise NotImplementedError
 
-    def write_data(self):
+    def write_data(self):  # noqa
         """
         写入日数据的逻辑控制函数
         """
-
         raise NotImplementedError

@@ -9,7 +9,7 @@ def update():
     清空数据库中今年的数据
     将今年的新数据写入数据库中
     """
-    conn = sqlite3.connect(r'Data\data.db')
+    conn = sqlite3.connect(r'Data\2020年.db')
     logging.debug('数据库连接成功')
     cur = conn.cursor()
 

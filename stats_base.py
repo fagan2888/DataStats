@@ -38,9 +38,7 @@ class Stats_Base(object):
             返回查询当前险种所需的SQL语句中的WHERE部分
     """
 
-    def __init__(
-        self, name: str = None, risk: str = None, conn: sqlite3.Connection = None
-    ):
+    def __init__(self, name: str = None, risk: str = None):
         """
         初始化统计类
 
@@ -53,10 +51,16 @@ class Stats_Base(object):
         self._name = name  # 机构简称
         self._risk = risk  # 险种
 
-        self._conn = conn
-        self._cur = self._conn.cursor()
+        self._conn = None
+        self._cur = None
 
         self.d = IDate(2020)
+
+        # 设置数据库连接对象
+        self._set_conn()
+
+        # 设置数据库链接的游标对象
+        self._set_cur()
 
         # 设置该机构对应险种的计划任务
         self._set_task()
@@ -88,8 +92,48 @@ class Stats_Base(object):
         """
         return self._risk
 
+    def _set_conn(self):
+        """
+        设置数据库链接对象
+
+            特别说明：
+                这是一个内部对象，在类的内部使用，请不要在类外部调用
+            参数：
+                无
+            返回值：
+                无
+        """
+        self._conn = sqlite3.connect(r"Data\data.db")
+
+    def _set_cur(self):
+        """
+        设置数据库链接的游标对象
+
+            特别说明：
+                这是一个内部对象，在类的内部使用，请不要在类外部调用
+            参数：
+                无
+            返回值：
+                无
+        """
+        self._cur = self.conn.cursor()
+
     @property
-    def cur(self) -> object:
+    def conn(self) -> sqlite3.Connection:
+        """
+        返回数据库链接对象
+
+            特别说明：
+                这是一个内部对象，在类的内部使用，请不要在类外部调用
+            参数：
+                无
+            返回值：
+                sqlite3.Connection
+        """
+        return self._conn
+
+    @property
+    def cur(self) -> sqlite3.Cursor:
         """
         返回数据库链接的游标对象
 
@@ -219,12 +263,12 @@ class Stats_Base(object):
     @lru_cache(maxsize=32)
     def _set_task(self) -> int:
         """
-        返回机构的计划任务，如果无任务则返回"——"
+        返回机构的计划任务
 
             参数：
                 无
             返回值：
-                int, str("——")
+                int
         """
         sql_str = f"SELECT [{self.risk}任务] \
             FROM [计划任务] \
@@ -233,8 +277,8 @@ class Stats_Base(object):
         self.cur.execute(sql_str)
 
         for value in self.cur.fetchone():
-            if value is None or value == 0:
-                self._task = "——"
+            if value is None:
+                self._task = 0
             else:
                 self._task = int(value)
 
@@ -263,12 +307,18 @@ class Stats_Base(object):
 
         if year is None:
             year = self.d.year
+        else:
+            year = int(year)
 
         if month is None:
             month = self.d.month
+        else:
+            month = int(month)
 
         if day is None:
             day = self.d.day
+        else:
+            day = int(day)
 
         # 获取已经过去的天数
         past_num_day = date(year, month, day).strftime("%j")
