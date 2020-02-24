@@ -13,16 +13,11 @@ def update(tb_name=None, back=True):
     清空数据库中今年的数据
     将今年的新数据写入数据库中
     """
-    conn = sqlite3.connect(r'Data\data.db')
+    table = tb_name
+
+    conn = sqlite3.connect(f'Data\\{table}.db')
     logging.debug('数据库连接成功')
     cur = conn.cursor()
-
-    back = False
-
-    if tb_name is None:
-        table = '车险清单'
-    else:
-        table = tb_name
 
     if back is True:
         path = f"Back\\{table}.xlsx"
@@ -71,4 +66,6 @@ def update(tb_name=None, back=True):
 
 
 if __name__ == '__main__':
-    update()
+    ta_name = "掌上宝APP出单统计"
+    back = False
+    update(tb_name=ta_name, back=back)

@@ -64,7 +64,7 @@ def zhong_zhi(wb, ws):
 
     # 对机构的年度整体保费进行统计，并在之后根据年保费进行排序
     for name in name_list:
-        d = Tong_Ji(name=name, risk='整体',)
+        d = Tong_Ji(name=name, risk='整体', wb=wb)
 
         datas.append((d.ming_cheng, d.nian_bao_fei()))
 
