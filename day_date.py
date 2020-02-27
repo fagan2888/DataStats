@@ -297,19 +297,6 @@ if __name__ == "__main__":
     a = datetime.now()
     conn = sqlite3.connect(r"Data\data.db")
 
-    # str_buffer = StringIO()
-
-    # for line in conn.iterdump():
-    #     str_buffer.write(f"{line}\n")
-
-    # conn.close()
-
-    # conn = sqlite3.connect(":memory:")
-    # cur = conn.cursor()
-    # cur.executescript(str_buffer.getvalue())
-    # b = datetime.now()
-    # print(f"date {b-a=}")
-
     a = datetime.now()
     day_data(workbook=wb, company="分公司", conn=conn)
     b = datetime.now()

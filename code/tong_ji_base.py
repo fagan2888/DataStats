@@ -59,22 +59,6 @@ class Tong_Ji_Base(object):
 
         self._conn = conn
         self._cur = self._conn.cursor()
-
-        # conn = sqlite3.connect(r"Data\data.db")
-
-        # str_buffer = StringIO()
-
-        # for line in conn.iterdump():
-        #     str_buffer.write(f"{line}\n")
-
-        # conn.close()
-
-        # self._conn = sqlite3.connect(":memory:")
-        # self._cur = self._conn.cursor()
-        # self._cur.executescript(str_buffer.getvalue())
-
-        # self._conn = sqlite3.connect(r"Data\data.db")
-        # self._cur = self._conn.cursor()
         self.d = IDate(2020)
 
     @property
