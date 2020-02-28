@@ -218,3 +218,59 @@ class IDate():
             day = self.day
 
         return f'{month:02d}-{day:02d}'
+
+    def week_first_date(self, year: int = None, week: int = None):
+        """
+        返回指定周的第一天日期
+
+            参数：
+                year：
+                    int，一个4位数的年份数据，用于指定返回日期的年份
+                week：
+                    int, 一个整数，用于指定返回日期的周数
+            返回值：
+                str：返回一个日期字符串，格式为“YYYY-MM-DD”
+        """
+
+        if year is None:
+            year = self.year
+
+        if week is None:
+            week = self.weeknum
+
+        sql_str = f"SELECT MIN([投保确认日期]) \
+            FROM [日期] \
+            WHERE [日期].年份 = '{year}' \
+            AND[日期].周数 = '{week}' "
+        self._cur.execute(sql_str)
+        value = self._cur.fetchone()[0]
+        return value
+
+    def week_last_date(self, year: int = None, week: int = None):
+        """
+        返回指定周的第一天日期
+
+            参数：
+                year：
+                    int，一个4位数的年份数据，用于指定返回日期的年份
+                week：
+                    int, 一个整数，用于指定返回日期的周数
+            返回值：
+                str：返回一个日期字符串，格式为“YYYY-MM-DD”
+        """
+
+        if year is None:
+            year = self.year
+
+        if week is None:
+            week = self.weeknum
+
+        sql_str = f"SELECT MAX([2020年].[投保确认日期]) \
+            FROM [日期] \
+                JOIN [2020年] ON [日期].[投保确认日期] = [2020年].[投保确认日期] \
+            WHERE [日期].年份 = '{year}' \
+            AND[日期].周数 = '{week}'"
+        self._cur.execute(sql_str)
+        value = self._cur.fetchone()[0]
+
+        return value

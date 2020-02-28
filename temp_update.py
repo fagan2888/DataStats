@@ -66,6 +66,7 @@ def update(tb_name=None, back=True):
 
 
 if __name__ == '__main__':
-    ta_name = "掌上宝APP出单统计"
+    # ta_name = "掌上宝APP出单统计"
+    ta_name = "车险机动车类型"
     back = False
     update(tb_name=ta_name, back=back)

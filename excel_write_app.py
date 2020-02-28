@@ -165,13 +165,20 @@ class Excel_Write_App:
         """
         return self._style
 
-    def write_salesman(self, dtype, app, week=None):
+    def write_salesman(self, dtype, app, week: int = None):
         """
         写入业务员统计表
         """
 
         nrow = 0
         ncol = 0
+
+        if week is None:
+            first_date = "2020-02-17"
+            last_date = self.date.short_date()
+        else:
+            first_date = self.date.week_first_date(week=week)
+            last_date = self.date.week_last_date(week=week)
 
         # 写入表标题
         self.ws.merge_range(
@@ -189,7 +196,7 @@ class Excel_Write_App:
             first_col=ncol,
             last_row=nrow,
             last_col=ncol + 7,
-            data=f"数据统计范围：2020-2-17 至 {self.date.short_date()}",
+            data=f"数据统计范围：{first_date} 至 {last_date}",
             cell_format=self.style.explain,
         )
         nrow += 1
@@ -200,9 +207,9 @@ class Excel_Write_App:
         nrow += 1
 
         if dtype == "sum":
-            values = app.get_salesman_sum()
+            values = app.get_salesman()
         elif dtype == "week":
-            values = app.get_salesman_week(week)
+            values = app.get_salesman(week=week)
 
         i = 1
         for value in values:
@@ -261,9 +268,9 @@ class Excel_Write_App:
         nrow += 1
 
         if dtype == "sum":
-            values, value_sum = app.get_terminal_sum()
+            values, value_sum = app.get_terminal()
         elif dtype == "week":
-            values, value_sum = app.get_terminal_week(week)
+            values, value_sum = app.get_terminal(week=week)
 
         i = 1
         for value in values:
@@ -316,9 +323,9 @@ class Excel_Write_App:
         nrow += 1
 
         if dtype == "sum":
-            values = app.get_center_branch_sum()
+            values = app.get_center_branch()
         elif dtype == "week":
-            values = app.get_center_branch_week(week)
+            values = app.get_center_branch(week=week)
 
         app_num = 0
         sum_num = 0
@@ -383,9 +390,9 @@ class Excel_Write_App:
         nrow += 1
 
         if dtype == "sum":
-            values = app.get_company_sum(name)
+            values = app.get_company(name=name)
         elif dtype == "week":
-            values = app.get_company_week(name, week)
+            values = app.get_company(name=name, week=week)
 
         app_num = 0
         sum_num = 0
@@ -396,8 +403,10 @@ class Excel_Write_App:
             self.ws.write(nrow, ncol + 1, value[1], self.style.string)
             self.ws.write(nrow, ncol + 2, value[2], self.style.string)
             self.ws.write(nrow, ncol + 3, value[3], self.style.percent)
-            app_num += value[1]
-            sum_num += value[2]
+            if value[1] is not None:
+                app_num += value[1]
+            if value[2] is not None:
+                sum_num += value[2]
             nrow += 1
             i += 1
 
