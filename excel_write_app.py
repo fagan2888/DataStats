@@ -241,6 +241,13 @@ class Excel_Write_App:
         nrow = 0
         ncol = 10
 
+        if week is None:
+            first_date = "2020-02-17"
+            last_date = self.date.short_date()
+        else:
+            first_date = self.date.week_first_date(week=week)
+            last_date = self.date.week_last_date(week=week)
+
         # 写入表标题
         self.ws.merge_range(
             first_row=nrow,
@@ -257,7 +264,7 @@ class Excel_Write_App:
             first_col=ncol,
             last_row=nrow,
             last_col=ncol + 2,
-            data=f"数据统计范围：2020-2-17 至 {self.date.short_date()}",
+            data=f"数据统计范围：{first_date} 至 {last_date}",
             cell_format=self.style.explain,
         )
         nrow += 1
@@ -296,12 +303,19 @@ class Excel_Write_App:
         nrow = nrow
         ncol = 10
 
+        if week is None:
+            first_date = "2020-02-17"
+            last_date = self.date.short_date()
+        else:
+            first_date = self.date.week_first_date(week=week)
+            last_date = self.date.week_last_date(week=week)
+
         # 写入表标题
         self.ws.merge_range(
             first_row=nrow,
             first_col=ncol,
             last_row=nrow,
-            last_col=ncol + 3,
+            last_col=ncol + 6,
             data="掌上宝APP出单数量统计表",
             cell_format=self.style.title,
         )
@@ -311,13 +325,32 @@ class Excel_Write_App:
             first_row=nrow,
             first_col=ncol,
             last_row=nrow,
-            last_col=ncol + 3,
-            data=f"数据统计范围：2020-2-17 至 {self.date.short_date()}",
+            last_col=ncol + 6,
+            data=f"数据统计范围：{first_date} 至 {last_date}",
             cell_format=self.style.explain,
         )
         nrow += 1
 
-        header = ["中心支公司", "APP件数", "总件数", "APP件数占比"]
+        self.ws.merge_range(
+            first_row=nrow,
+            first_col=ncol,
+            last_row=nrow,
+            last_col=ncol + 3,
+            data=f"整体业务",
+            cell_format=self.style.header,
+        )
+
+        self.ws.merge_range(
+            first_row=nrow,
+            first_col=ncol + 4,
+            last_row=nrow,
+            last_col=ncol + 6,
+            data=f"剔除摩托车",
+            cell_format=self.style.header,
+        )
+        nrow += 1
+
+        header = ["中心支公司", "APP件数", "总件数", "APP件数占比", "APP件数", "总件数", "APP件数占比"]
 
         self.ws.write_row(nrow, ncol, header, self.style.header)
         nrow += 1
@@ -329,6 +362,8 @@ class Excel_Write_App:
 
         app_num = 0
         sum_num = 0
+        not_moto_app = 0
+        not_moto_sum = 0
 
         i = 1
         for value in values:
@@ -336,8 +371,13 @@ class Excel_Write_App:
             self.ws.write(nrow, ncol + 1, value[1], self.style.string)
             self.ws.write(nrow, ncol + 2, value[2], self.style.string)
             self.ws.write(nrow, ncol + 3, value[3], self.style.percent)
+            self.ws.write(nrow, ncol + 4, value[4], self.style.string)
+            self.ws.write(nrow, ncol + 5, value[5], self.style.string)
+            self.ws.write(nrow, ncol + 6, value[6], self.style.percent)
             app_num += value[1]
             sum_num += value[2]
+            not_moto_app += value[4]
+            not_moto_sum += value[5]
             nrow += 1
             i += 1
 
@@ -345,11 +385,15 @@ class Excel_Write_App:
         self.ws.write(nrow, ncol + 1, app_num, self.style.string)
         self.ws.write(nrow, ncol + 2, sum_num, self.style.string)
         self.ws.write(nrow, ncol + 3, app_num / sum_num, self.style.percent)
+        self.ws.write(nrow, ncol + 4, not_moto_app, self.style.string)
+        self.ws.write(nrow, ncol + 5, not_moto_sum, self.style.string)
+        self.ws.write(nrow, ncol + 6, not_moto_app / not_moto_sum, self.style.percent)
+
         nrow += 1
 
         self.ws.set_column(first_col=ncol, last_col=ncol, width=24)
         self.ws.set_column(first_col=ncol + 1, last_col=ncol + 2, width=10)
-        self.ws.set_column(first_col=ncol + 3, last_col=ncol + 3, width=14)
+        self.ws.set_column(first_col=ncol + 3, last_col=ncol + 6, width=14)
 
         logging.info(f"中心支公司数据表写入完成")
 
@@ -363,12 +407,19 @@ class Excel_Write_App:
         nrow = nrow
         ncol = 10
 
+        if week is None:
+            first_date = "2020-02-17"
+            last_date = self.date.short_date()
+        else:
+            first_date = self.date.week_first_date(week=week)
+            last_date = self.date.week_last_date(week=week)
+
         # 写入表标题
         self.ws.merge_range(
             first_row=nrow,
             first_col=ncol,
             last_row=nrow,
-            last_col=ncol + 3,
+            last_col=ncol + 6,
             data="掌上宝APP出单数量统计表",
             cell_format=self.style.title,
         )
@@ -378,13 +429,32 @@ class Excel_Write_App:
             first_row=nrow,
             first_col=ncol,
             last_row=nrow,
-            last_col=ncol + 3,
-            data=f"数据统计范围：2020-2-17 至 {self.date.short_date()}",
+            last_col=ncol + 6,
+            data=f"数据统计范围：{first_date} 至 {last_date}",
             cell_format=self.style.explain,
         )
         nrow += 1
 
-        header = ["机构", "APP件数", "总件数", "APP件数占比"]
+        self.ws.merge_range(
+            first_row=nrow,
+            first_col=ncol,
+            last_row=nrow,
+            last_col=ncol + 3,
+            data=f"整体业务",
+            cell_format=self.style.header,
+        )
+
+        self.ws.merge_range(
+            first_row=nrow,
+            first_col=ncol + 4,
+            last_row=nrow,
+            last_col=ncol + 6,
+            data=f"剔除摩托车",
+            cell_format=self.style.header,
+        )
+        nrow += 1
+
+        header = ["中心支公司", "APP件数", "总件数", "APP件数占比", "APP件数", "总件数", "APP件数占比"]
 
         self.ws.write_row(nrow, ncol, header, self.style.header)
         nrow += 1
@@ -396,6 +466,8 @@ class Excel_Write_App:
 
         app_num = 0
         sum_num = 0
+        not_moto_app = 0
+        not_moto_sum = 0
 
         i = 1
         for value in values:
@@ -403,10 +475,17 @@ class Excel_Write_App:
             self.ws.write(nrow, ncol + 1, value[1], self.style.string)
             self.ws.write(nrow, ncol + 2, value[2], self.style.string)
             self.ws.write(nrow, ncol + 3, value[3], self.style.percent)
+            self.ws.write(nrow, ncol + 4, value[4], self.style.string)
+            self.ws.write(nrow, ncol + 5, value[5], self.style.string)
+            self.ws.write(nrow, ncol + 6, value[6], self.style.percent)
             if value[1] is not None:
                 app_num += value[1]
             if value[2] is not None:
                 sum_num += value[2]
+            if value[4] is not None:
+                not_moto_app += value[4]
+            if value[5] is not None:
+                not_moto_sum += value[5]
             nrow += 1
             i += 1
 
@@ -414,11 +493,15 @@ class Excel_Write_App:
         self.ws.write(nrow, ncol + 1, app_num, self.style.string)
         self.ws.write(nrow, ncol + 2, sum_num, self.style.string)
         self.ws.write(nrow, ncol + 3, app_num / sum_num, self.style.percent)
+        self.ws.write(nrow, ncol + 4, not_moto_app, self.style.string)
+        self.ws.write(nrow, ncol + 5, not_moto_sum, self.style.string)
+        self.ws.write(nrow, ncol + 6, not_moto_app / not_moto_sum, self.style.percent)
+
         nrow += 1
 
         self.ws.set_column(first_col=ncol, last_col=ncol, width=24)
         self.ws.set_column(first_col=ncol + 1, last_col=ncol + 2, width=10)
-        self.ws.set_column(first_col=ncol + 3, last_col=ncol + 3, width=14)
+        self.ws.set_column(first_col=ncol + 3, last_col=ncol + 6, width=14)
 
         logging.info(f"{name}中心支公司数据表写入完成")
 

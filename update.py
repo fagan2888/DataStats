@@ -2,6 +2,14 @@ import sqlite3
 import logging
 from openpyxl import load_workbook
 
+logging.disable(logging.DEBUG)
+logging.basicConfig(
+    level=logging.DEBUG, format=" %(asctime)s | %(levelname)s | %(message)s"
+)
+logging.basicConfig(
+    level=logging.INFO, format=" %(asctime)s | %(levelname)s | %(message)s"
+)
+
 
 def update():
     """

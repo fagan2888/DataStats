@@ -75,4 +75,3 @@ if __name__ == '__main__':
     # ta_name = "车险清单"
     # back = False
     # update(tb_name=ta_name, back=back)
-

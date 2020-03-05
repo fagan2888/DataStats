@@ -331,20 +331,79 @@ class Stats_App():
             ORDER  BY [总签单件数] DESC"
         self.cur.execute(sql_str)
 
+        sql_str = f"CREATE TEMP VIEW [非摩APP件数] \
+            AS \
+            SELECT \
+                [机构].[中心支公司简称], \
+                COUNT ([掌上宝APP出单统计].[保单号]) AS [APP签单件数] \
+            FROM   [掌上宝APP出单统计] \
+                LEFT JOIN [车险机动车类型] \
+                    ON [掌上宝APP出单统计].[保单号] = [车险机动车类型].[保单号] \
+                JOIN [日期] \
+                    ON [掌上宝APP出单统计].[投保确认日期] = [日期].[投保确认日期] \
+                JOIN [机构] \
+                ON [掌上宝APP出单统计].[机构] = [机构].[机构] \
+            WHERE  [终端来源] = '0106移动展业(App)' \
+            AND [机动车种类] <> '摩托车' \
+            {sum_sql_str} \
+            GROUP  BY [机构].[中心支公司简称] \
+            ORDER  BY [APP签单件数] DESC"
+        self.cur.execute(sql_str)
+
+        sql_str = f"CREATE TEMP VIEW [非摩总件数] \
+            AS \
+            SELECT \
+                [机构].[中心支公司简称], \
+                COUNT ([掌上宝APP出单统计].[保单号]) AS [总签单件数], \
+                ROUND (ABS ([保险期限]) / 86400) AS [保期] \
+            FROM   [掌上宝APP出单统计].[掌上宝APP出单统计] \
+                LEFT JOIN [车险机动车类型] \
+                    ON [掌上宝APP出单统计].[保单号] = [车险机动车类型].[保单号] \
+                JOIN [机构] \
+                    ON [掌上宝APP出单统计].[机构] = [机构].[机构] \
+                JOIN[日期] \
+                    ON [掌上宝APP出单统计].[投保确认日期] = [日期].[投保确认日期] \
+            WHERE  ([机动车种类] <> '拖拉机' \
+                    AND [机动车种类] <> '特种车' \
+                    AND [机动车种类] <> '摩托车') \
+                    IS NOT ([中心支公司] = '011416西双版纳中心支公司' \
+                    AND [车险/财产险/人身险] = '车险' \
+                    AND [保期] < 360) \
+                        IS NOT ([中心支公司] = '011415文山中心支公司' \
+                    AND [车险/财产险/人身险] = '车险' \
+                    AND [保期] < 360) \
+                    AND [掌上宝APP出单统计].[机构] <> '0114010110云南分公司航旅出行项目（虚拟）' \
+                    {sum_sql_str} \
+            GROUP  BY [机构].[中心支公司简称] \
+            ORDER  BY [总签单件数] DESC"
+        self.cur.execute(sql_str)
+
         sql_str = "SELECT \
                 [总签单件数].[中心支公司简称] AS [中支], \
-                [APP签单件数], \
+                [APP签单件数].[APP签单件数], \
                 [总签单件数].[总签单件数], \
-                [APP签单件数] * 1.0 / [总签单件数] AS [APP出单占比] \
+                [APP签单件数].[APP签单件数] * 1.0 / [总签单件数].[总签单件数] AS [APP出单占比], \
+                [非摩APP件数].[APP签单件数], \
+                [非摩总件数].[总签单件数], \
+                [非摩APP件数].[APP签单件数] * 1.0 / [非摩总件数].[总签单件数] AS [非摩APP占比] \
             FROM   [总签单件数] \
-                JOIN [APP签单件数] ON [总签单件数].[中心支公司简称] = [APP签单件数].[中心支公司简称] \
-            ORDER  BY [APP签单件数] DESC"
+                JOIN [APP签单件数] \
+                    ON [总签单件数].[中心支公司简称] = [APP签单件数].[中心支公司简称] \
+                JOIN [非摩APP件数] \
+                    ON [总签单件数].[中心支公司简称] = [非摩APP件数].[中心支公司简称] \
+                JOIN [非摩总件数] \
+                    ON [总签单件数].[中心支公司简称] = [非摩总件数].[中心支公司简称] \
+            ORDER  BY [APP签单件数].[APP签单件数] DESC;"
         self.cur.execute(sql_str)
         value = self.cur.fetchall()
 
         sql_str = "DROP VIEW [APP签单件数]"
         self.cur.execute(sql_str)
-        sql_str = "DROP VIEW 总签单件数"
+        sql_str = "DROP VIEW [总签单件数]"
+        self.cur.execute(sql_str)
+        sql_str = "DROP VIEW [非摩APP件数]"
+        self.cur.execute(sql_str)
+        sql_str = "DROP VIEW [非摩总件数]"
         self.cur.execute(sql_str)
 
         return value
@@ -372,14 +431,15 @@ class Stats_App():
         sql_str = f"CREATE TEMP VIEW [APP签单件数] \
             AS \
             SELECT \
-                [机构].[机构简称] AS [机构简称], \
+                [机构].[机构简称], \
                 COUNT ([保单号]) AS [APP签单件数] \
             FROM   [掌上宝APP出单统计] \
-                JOIN [日期] ON [掌上宝APP出单统计].[投保确认日期] = [日期].[投保确认日期] \
-                JOIN [机构] ON [掌上宝APP出单统计].[机构] = [机构].[机构] \
-            WHERE [终端来源] = '0106移动展业(App)' \
-            AND [机构].[中心支公司简称] = '{name}' \
-            AND [机构].[机构简称] != '航旅项目' \
+                JOIN [日期] \
+                ON [掌上宝APP出单统计].[投保确认日期] = [日期].[投保确认日期] \
+                JOIN [机构] \
+                ON [掌上宝APP出单统计].[机构] = [机构].[机构] \
+            WHERE  [终端来源] = '0106移动展业(App)' \
+                AND [机构].[中心支公司简称] = '{name}' \
             {app_sql_str} \
             GROUP  BY [机构].[机构简称] \
             ORDER  BY [APP签单件数] DESC"
@@ -388,8 +448,8 @@ class Stats_App():
         sql_str = f"CREATE TEMP VIEW [总签单件数] \
             AS \
             SELECT \
-                [机构].[机构简称] AS [机构简称], \
-                COUNT ([掌上宝APP出单统计].[保单号]) AS[总签单件数], \
+                [机构].[机构简称], \
+                COUNT ([掌上宝APP出单统计].[保单号]) AS [总签单件数], \
                 ROUND (ABS ([保险期限]) / 86400) AS [保期] \
             FROM   [掌上宝APP出单统计].[掌上宝APP出单统计] \
                 LEFT JOIN [车险机动车类型] \
@@ -407,26 +467,87 @@ class Stats_App():
                     AND [车险/财产险/人身险] = '车险' \
                     AND [保期] < 360) \
                     AND [掌上宝APP出单统计].[机构] <> '0114010110云南分公司航旅出行项目（虚拟）' \
+                    AND [机构].[中心支公司简称] = '{name}' \
             {sum_sql_str} \
-            AND [机构].[中心支公司简称] = '{name}' \
+            GROUP  BY [机构].[机构简称] \
+            ORDER  BY [总签单件数] DESC"
+        self.cur.execute(sql_str)
+
+        sql_str = f"CREATE TEMP VIEW [非摩APP件数] \
+            AS \
+            SELECT \
+                [机构].[机构简称], \
+                COUNT ([掌上宝APP出单统计].[保单号]) AS [APP签单件数] \
+            FROM   [掌上宝APP出单统计] \
+                LEFT JOIN [车险机动车类型] \
+                    ON [掌上宝APP出单统计].[保单号] = [车险机动车类型].[保单号] \
+                JOIN [日期] \
+                    ON [掌上宝APP出单统计].[投保确认日期] = [日期].[投保确认日期] \
+                JOIN [机构] \
+                ON [掌上宝APP出单统计].[机构] = [机构].[机构] \
+            WHERE  [终端来源] = '0106移动展业(App)' \
+                AND [机动车种类] <> '摩托车' \
+                AND [机构].[中心支公司简称] = '{name}' \
+            {sum_sql_str} \
+            GROUP  BY [机构].[机构简称] \
+            ORDER  BY [APP签单件数] DESC"
+        self.cur.execute(sql_str)
+
+        sql_str = f"CREATE TEMP VIEW [非摩总件数] \
+            AS \
+            SELECT \
+                [机构].[机构简称], \
+                COUNT ([掌上宝APP出单统计].[保单号]) AS [总签单件数], \
+                ROUND (ABS ([保险期限]) / 86400) AS [保期] \
+            FROM   [掌上宝APP出单统计].[掌上宝APP出单统计] \
+                LEFT JOIN [车险机动车类型] \
+                    ON [掌上宝APP出单统计].[保单号] = [车险机动车类型].[保单号] \
+                JOIN [机构] \
+                    ON [掌上宝APP出单统计].[机构] = [机构].[机构] \
+                JOIN[日期] \
+                    ON [掌上宝APP出单统计].[投保确认日期] = [日期].[投保确认日期] \
+            WHERE  ([机动车种类] <> '拖拉机' \
+                    AND [机动车种类] <> '特种车' \
+                    AND [机动车种类] <> '摩托车') \
+                    IS NOT ([中心支公司] = '011416西双版纳中心支公司' \
+                    AND [车险/财产险/人身险] = '车险' \
+                    AND [保期] < 360) \
+                        IS NOT ([中心支公司] = '011415文山中心支公司' \
+                    AND [车险/财产险/人身险] = '车险' \
+                    AND [保期] < 360) \
+                    AND [掌上宝APP出单统计].[机构] <> '0114010110云南分公司航旅出行项目（虚拟）' \
+                    AND [机构].[中心支公司简称] = '{name}' \
+                    {sum_sql_str} \
             GROUP  BY [机构].[机构简称] \
             ORDER  BY [总签单件数] DESC"
         self.cur.execute(sql_str)
 
         sql_str = "SELECT \
-                [总签单件数].[机构简称] AS [机构], \
-                [APP签单件数], \
+                [总签单件数].[机构简称] AS [中支], \
+                [APP签单件数].[APP签单件数], \
                 [总签单件数].[总签单件数], \
-                [APP签单件数] * 1.0 / [总签单件数] AS [APP出单占比] \
+                [APP签单件数].[APP签单件数] * 1.0 / [总签单件数].[总签单件数] AS [APP出单占比], \
+                [非摩APP件数].[APP签单件数], \
+                [非摩总件数].[总签单件数], \
+                [非摩APP件数].[APP签单件数] * 1.0 / [非摩总件数].[总签单件数] AS [非摩APP占比] \
             FROM   [总签单件数] \
-                LEFT JOIN [APP签单件数] ON [总签单件数].[机构简称] = [APP签单件数].[机构简称] \
-            ORDER  BY [APP签单件数] DESC"
+                JOIN [APP签单件数] \
+                    ON [总签单件数].[机构简称] = [APP签单件数].[机构简称] \
+                JOIN [非摩APP件数] \
+                    ON [总签单件数].[机构简称] = [非摩APP件数].[机构简称] \
+                JOIN [非摩总件数] \
+                    ON [总签单件数].[机构简称] = [非摩总件数].[机构简称] \
+            ORDER  BY [APP签单件数].[APP签单件数] DESC;"
         self.cur.execute(sql_str)
         value = self.cur.fetchall()
 
         sql_str = "DROP VIEW [APP签单件数]"
         self.cur.execute(sql_str)
-        sql_str = "DROP VIEW 总签单件数"
+        sql_str = "DROP VIEW [总签单件数]"
+        self.cur.execute(sql_str)
+        sql_str = "DROP VIEW [非摩APP件数]"
+        self.cur.execute(sql_str)
+        sql_str = "DROP VIEW [非摩总件数]"
         self.cur.execute(sql_str)
 
         return value
