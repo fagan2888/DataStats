@@ -27,14 +27,14 @@ def update():
     str_sql = f"DELETE FROM [{table}]"
     cur.execute(str_sql)
     conn.commit()
-    logging.debug("数据库数据清空完毕")
+    logging.info("数据库数据清空完毕")
 
     # 读入Excel表格数据
     wb = load_workbook('云南分公司业务统计表.xlsx')
     ws = wb['page']
 
-    logging.debug("Excel 文件读入成功")
-    logging.debug(f"需要导入{ws.max_row}条数据")
+    logging.info("Excel 文件读入成功")
+    logging.info(f"需要导入{ws.max_row}条数据")
 
     nrow = 1
     # 将Excel数据写入数据库中
@@ -52,9 +52,9 @@ def update():
 
         nrow += 1
         if nrow % 500 == 0:
-            logging.debug(f'已导入 {nrow} / {ws.max_row} 条数据')
+            logging.info(f'已导入 {nrow} / {ws.max_row} 条数据')
 
-    logging.debug('数据写入数据库完成')
+    logging.info('数据写入数据库完成')
 
     str_sql = f"DELETE FROM '{table}' \
                 WHERE [车险/财产险/人身险] <> '车险' \
@@ -62,12 +62,12 @@ def update():
                 AND [车险/财产险/人身险] <> '人身险'"
     cur.execute(str_sql)
 
-    logging.debug('非统计数据删除完成')
+    logging.info('非统计数据删除完成')
 
     conn.commit()
 
-    logging.debug("数据库事务提交完成")
-    logging.debug("数据库更新操作完成")
+    logging.info("数据库事务提交完成")
+    logging.info("数据库更新操作完成")
 
     cur.close()
     conn.close()
