@@ -119,7 +119,7 @@ class Stats_App():
                 [机构].[中心支公司简称], \
                 [机构].[机构简称], \
                 [业务员], \
-                COUNT ([掌上宝APP出单统计].[保单号]) AS [总签单件数], \
+                SUM ([掌上宝APP出单统计].[保单笔数]) AS [总签单件数], \
                 SUM ([签单保费/批改保费]) AS[保费], \
                 ROUND (ABS ([保险期限]) / 86400) AS [保期] \
             FROM   [掌上宝APP出单统计].[掌上宝APP出单统计] \
@@ -149,7 +149,7 @@ class Stats_App():
                 [机构].[中心支公司简称], \
                 [机构].[机构简称], \
                 [业务员], \
-                COUNT ([保单号]) AS [APP签单件数], \
+                SUM ([掌上宝APP出单统计].[保单笔数]) [APP签单件数], \
                 SUM ([签单保费/批改保费]) AS [保费] \
             FROM   [掌上宝APP出单统计] \
                 JOIN [日期] \
@@ -201,7 +201,7 @@ class Stats_App():
             sum_sql_str = f"AND [日期].[周数] = '{week}'"
 
         sql_str = f"SELECT [终端来源], \
-            COUNT([掌上宝APP出单统计].[保单号]) AS [签单数量], \
+            SUM ([掌上宝APP出单统计].[保单笔数]) AS [签单数量], \
             ROUND (ABS ([保险期限]) / 86400) AS [保期] \
             FROM   [掌上宝APP出单统计].[掌上宝APP出单统计] \
                 LEFT JOIN [车险机动车类型] \
@@ -223,7 +223,7 @@ class Stats_App():
             GROUP BY [终端来源] \
             UNION \
             SELECT '合计', \
-                COUNT([掌上宝APP出单统计].[保单号]) AS [合计], \
+                SUM ([掌上宝APP出单统计].[保单笔数]) AS [合计], \
                 ROUND (ABS ([保险期限]) / 86400) AS [保期] \
             FROM   [掌上宝APP出单统计].[掌上宝APP出单统计] \
                 LEFT JOIN [车险机动车类型] \
@@ -246,7 +246,7 @@ class Stats_App():
         self.cur.execute(sql_str)
         value = self.cur.fetchall()
 
-        sql_str = f"SELECT COUNT([掌上宝APP出单统计].[保单号]) AS [合计], \
+        sql_str = f"SELECT SUM ([掌上宝APP出单统计].[保单笔数]) AS [合计], \
                 ROUND (ABS ([保险期限]) / 86400) AS [保期] \
             FROM   [掌上宝APP出单统计].[掌上宝APP出单统计] \
                 LEFT JOIN [车险机动车类型] \
@@ -292,7 +292,7 @@ class Stats_App():
             AS \
             SELECT \
                 [机构].[中心支公司简称], \
-                COUNT ([保单号]) AS [APP签单件数] \
+                SUM ([掌上宝APP出单统计].[保单笔数]) AS [APP签单件数] \
             FROM   [掌上宝APP出单统计] \
                 JOIN [日期] \
                 ON [掌上宝APP出单统计].[投保确认日期] = [日期].[投保确认日期] \
@@ -308,7 +308,7 @@ class Stats_App():
             AS \
             SELECT \
                 [机构].[中心支公司简称], \
-                COUNT ([掌上宝APP出单统计].[保单号]) AS [总签单件数], \
+                SUM ([掌上宝APP出单统计].[保单笔数]) AS [总签单件数], \
                 ROUND (ABS ([保险期限]) / 86400) AS [保期] \
             FROM   [掌上宝APP出单统计].[掌上宝APP出单统计] \
                 LEFT JOIN [车险机动车类型] \
@@ -335,7 +335,7 @@ class Stats_App():
             AS \
             SELECT \
                 [机构].[中心支公司简称], \
-                COUNT ([掌上宝APP出单统计].[保单号]) AS [APP签单件数] \
+                SUM ([掌上宝APP出单统计].[保单笔数]) AS [APP签单件数] \
             FROM   [掌上宝APP出单统计] \
                 LEFT JOIN [车险机动车类型] \
                     ON [掌上宝APP出单统计].[保单号] = [车险机动车类型].[保单号] \
@@ -354,7 +354,7 @@ class Stats_App():
             AS \
             SELECT \
                 [机构].[中心支公司简称], \
-                COUNT ([掌上宝APP出单统计].[保单号]) AS [总签单件数], \
+                SUM ([掌上宝APP出单统计].[保单笔数]) AS [总签单件数], \
                 ROUND (ABS ([保险期限]) / 86400) AS [保期] \
             FROM   [掌上宝APP出单统计].[掌上宝APP出单统计] \
                 LEFT JOIN [车险机动车类型] \
