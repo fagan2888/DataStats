@@ -283,7 +283,11 @@ class Excel_Write_App:
         for value in values:
             self.ws.write(nrow, ncol, value[0], self.style.string)
             self.ws.write(nrow, ncol + 1, value[1], self.style.string)
-            self.ws.write(nrow, ncol + 2, value[1] / value_sum, self.style.percent)
+            if value[1] is None or value_sum is None:
+                percent = 0
+            else:
+                percent = value[1] / value_sum
+            self.ws.write(nrow, ncol + 2, percent, self.style.percent)
 
             nrow += 1
             i += 1
@@ -384,10 +388,18 @@ class Excel_Write_App:
         self.ws.write(nrow, ncol, "合计", self.style.string)
         self.ws.write(nrow, ncol + 1, app_num, self.style.string)
         self.ws.write(nrow, ncol + 2, sum_num, self.style.string)
-        self.ws.write(nrow, ncol + 3, app_num / sum_num, self.style.percent)
+        if app_num == 0 or sum_num == 0:
+            percent = 0
+        else:
+            percent = app_num / sum_num
+        self.ws.write(nrow, ncol + 3, percent, self.style.percent)
         self.ws.write(nrow, ncol + 4, not_moto_app, self.style.string)
         self.ws.write(nrow, ncol + 5, not_moto_sum, self.style.string)
-        self.ws.write(nrow, ncol + 6, not_moto_app / not_moto_sum, self.style.percent)
+        if not_moto_app == 0 or not_moto_sum == 0:
+            percent = 0
+        else:
+            percent = not_moto_app / not_moto_sum
+        self.ws.write(nrow, ncol + 6, percent, self.style.percent)
 
         nrow += 1
 
@@ -492,10 +504,18 @@ class Excel_Write_App:
         self.ws.write(nrow, ncol, "合计", self.style.string)
         self.ws.write(nrow, ncol + 1, app_num, self.style.string)
         self.ws.write(nrow, ncol + 2, sum_num, self.style.string)
-        self.ws.write(nrow, ncol + 3, app_num / sum_num, self.style.percent)
+        if app_num == 0 or sum_num == 0:
+            percent = 0
+        else:
+            percent = app_num / sum_num
+        self.ws.write(nrow, ncol + 3, percent, self.style.percent)
         self.ws.write(nrow, ncol + 4, not_moto_app, self.style.string)
         self.ws.write(nrow, ncol + 5, not_moto_sum, self.style.string)
-        self.ws.write(nrow, ncol + 6, not_moto_app / not_moto_sum, self.style.percent)
+        if not_moto_app == 0 or not_moto_sum == 0:
+            percent = 0
+        else:
+            percent = not_moto_app / not_moto_sum
+        self.ws.write(nrow, ncol + 6, percent, self.style.percent)
 
         nrow += 1
 
@@ -561,6 +581,18 @@ class Excel_Write_App:
         nrow = self.write_company("week", "保山", app, nrow + 1, week=10)
         nrow = self.write_company("week", "版纳", app, nrow + 1, week=10)
         nrow = self.write_company("week", "怒江", app, nrow + 1, week=10)
+
+        self.set_table_name("第11周数据统计表")
+        self.write_salesman("week", app, week=11)
+        nrow = self.write_terminal("week", app, week=11)
+        nrow = self.write_center_branch("week", app, nrow + 1, week=11)
+        nrow = self.write_company("week", "昆明", app, nrow + 1, week=11)
+        nrow = self.write_company("week", "曲靖", app, nrow + 1, week=11)
+        nrow = self.write_company("week", "文山", app, nrow + 1, week=11)
+        nrow = self.write_company("week", "大理", app, nrow + 1, week=11)
+        nrow = self.write_company("week", "保山", app, nrow + 1, week=11)
+        nrow = self.write_company("week", "版纳", app, nrow + 1, week=11)
+        nrow = self.write_company("week", "怒江", app, nrow + 1, week=11)
 
         app.detach_db()
 
