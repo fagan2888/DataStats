@@ -201,8 +201,8 @@ class Stats_App():
             sum_sql_str = f"AND [日期].[周数] = '{week}'"
 
         sql_str = f"SELECT [终端来源], \
-            SUM ([掌上宝APP出单统计].[保单笔数]) AS [签单数量], \
-            ROUND (ABS ([保险期限]) / 86400) AS [保期] \
+                SUM ([掌上宝APP出单统计].[保单笔数]) AS [签单数量], \
+                ROUND (ABS ([保险期限]) / 86400) AS [保期] \
             FROM   [掌上宝APP出单统计].[掌上宝APP出单统计] \
                 LEFT JOIN [车险机动车类型] \
                 ON [掌上宝APP出单统计].[保单号] = [车险机动车类型].[保单号] \

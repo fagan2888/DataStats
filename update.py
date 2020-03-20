@@ -23,14 +23,14 @@ def update():
 
     table = '2020年'
 
-    # 清空原数据库数据
-    str_sql = f"DELETE FROM [{table}]"
-    cur.execute(str_sql)
-    conn.commit()
-    logging.info("数据库数据清空完毕")
+    # # 清空原数据库数据
+    # str_sql = f"DELETE FROM [{table}]"
+    # cur.execute(str_sql)
+    # conn.commit()
+    # logging.info("数据库数据清空完毕")
 
     # 读入Excel表格数据
-    wb = load_workbook('云南分公司业务统计表.xlsx')
+    wb = load_workbook('云南分公司业务统计表.xlsx', read_only=True)
     ws = wb['page']
 
     logging.info("Excel 文件读入成功")
@@ -42,7 +42,7 @@ def update():
                             max_row=ws.max_row,
                             min_col=1,
                             max_col=ws.max_column):
-        str_sql = f"INSERT INTO '{table}' VALUES ("
+        str_sql = f"INSERT OR IGNORE INTO '{table}' VALUES ("
         for v in row:
             str_sql += f"'{v.value}', "
 

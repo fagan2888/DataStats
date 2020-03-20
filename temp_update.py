@@ -24,11 +24,11 @@ def update(tb_name=None, back=True):
     else:
         path = f"{table}.xlsx"
 
-    # 清空原数据库数据
-    str_sql = f"DELETE FROM [{table}]"
-    cur.execute(str_sql)
-    conn.commit()
-    logging.debug("数据库数据清空完毕")
+    # # 清空原数据库数据
+    # str_sql = f"DELETE FROM [{table}]"
+    # cur.execute(str_sql)
+    # conn.commit()
+    # logging.debug("数据库数据清空完毕")
 
     # 读入Excel表格数据
     wb = load_workbook(path, read_only=True)
@@ -43,7 +43,7 @@ def update(tb_name=None, back=True):
                             max_row=ws.max_row,
                             min_col=1,
                             max_col=ws.max_column):
-        str_sql = f"INSERT INTO '{table}' VALUES ("
+        str_sql = f"INSERT OR IGNORE INTO '{table}' VALUES ("
         for v in row:
             str_sql += f"'{v.value}', "
 
