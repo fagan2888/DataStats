@@ -618,6 +618,18 @@ class Excel_Write_App:
         nrow = self.write_company("week", "版纳", app, nrow + 1, week=13)
         nrow = self.write_company("week", "怒江", app, nrow + 1, week=13)
 
+        self.set_table_name("第14周数据统计表")
+        self.write_salesman("week", app, week=14)
+        nrow = self.write_terminal("week", app, week=14)
+        nrow = self.write_center_branch("week", app, nrow + 1, week=14)
+        nrow = self.write_company("week", "昆明", app, nrow + 1, week=14)
+        nrow = self.write_company("week", "曲靖", app, nrow + 1, week=14)
+        nrow = self.write_company("week", "文山", app, nrow + 1, week=14)
+        nrow = self.write_company("week", "大理", app, nrow + 1, week=14)
+        nrow = self.write_company("week", "保山", app, nrow + 1, week=14)
+        nrow = self.write_company("week", "版纳", app, nrow + 1, week=14)
+        nrow = self.write_company("week", "怒江", app, nrow + 1, week=14)
+
         app.detach_db()
 
 

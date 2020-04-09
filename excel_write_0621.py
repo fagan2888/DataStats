@@ -264,7 +264,11 @@ class Excel_Write_0621:
             self.ws.write(nrow, ncol, app_sum, self.style.string)
             self.ws.write(nrow, ncol + 1, sum_sum, self.style.number)
             self.ws.write(nrow, ncol + 2, car_sum, self.style.string)
-            self.ws.write(nrow, ncol + 3, app_sum / car_sum, self.style.percent)
+            if car_sum == 0 or car_sum is None:
+                percent = 0
+            else:
+                percent = app_sum / car_sum
+            self.ws.write(nrow, ncol + 3, percent, self.style.percent)
             ncol += 4
         nrow += 1
 
@@ -530,7 +534,11 @@ class Excel_Write_0621:
             self.ws.write(tnrow, ncol, app_sum, self.style.string)
             self.ws.write(tnrow, ncol + 1, sum_sum, self.style.number)
             self.ws.write(tnrow, ncol + 2, car_sum, self.style.string)
-            self.ws.write(tnrow, ncol + 3, app_sum / car_sum, self.style.percent)
+            if car_sum == 0 or car_sum is None:
+                percent = 0
+            else:
+                percent = app_sum / car_sum
+            self.ws.write(tnrow, ncol + 3, percent, self.style.percent)
             ncol += 4
         nrow += tnrow + 1
 
